@@ -1,0 +1,69 @@
+{
+  "name": "hiring",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap-cloud-sdk/http-client": "^3.0.2",
+    "@sap/cds": "^6",
+    "@sap/xssec": "^3.2.17",
+    "express": "^4",
+    "passport": "^0.6.0"
+  },
+  "devDependencies": {
+    "sqlite3": "^5.0.4"
+  },
+  "scripts": {
+    "start": "cds run"
+  },
+  "engines": {
+    "node": "^16.15"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "es2020": true,
+      "node": true,
+      "jest": true,
+      "mocha": true
+    },
+    "globals": {
+      "SELECT": true,
+      "INSERT": true,
+      "UPDATE": true,
+      "DELETE": true,
+      "CREATE": true,
+      "DROP": true,
+      "CDL": true,
+      "CQL": true,
+      "CXL": true,
+      "cds": true
+    },
+    "rules": {
+      "no-console": "off",
+      "require-atomic-updates": "off"
+    }
+  },
+  "cds": {
+    "requires": {
+      "ECPositionManagement": {
+        "kind": "odata-v2",
+        "model": "srv/external/ECPositionManagement",
+        "credentials": {
+          "destination": "SF_COE",
+          "path": "/odata/v2"
+        }
+      },
+      "ECFoundationOrganization": {
+        "kind": "odata-v2",
+        "model": "srv/external/ECFoundationOrganization",
+        "credentials": {
+          "destination": "SF_COE",
+          "path": "/odata/v2"
+        }
+      }
+    }
+  }
+}

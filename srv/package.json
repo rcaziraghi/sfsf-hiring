@@ -1,0 +1,10 @@
+{
+  "cds": {
+    "requires": {
+      "ECPositionManagement": {
+        "kind": "odata-v2",
+        "model": "srv/external/ECPositionManagement"
+      }
+    }
+  }
+}

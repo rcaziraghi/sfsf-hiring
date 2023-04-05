@@ -1,0 +1,8 @@
+using deloitte.hiring as service from './service';
+
+namespace deloitte.hiring.ui;
+
+////////////////////////////////////////////////////////////////////////////
+//
+// UI annotations for the Root Entity
+//
