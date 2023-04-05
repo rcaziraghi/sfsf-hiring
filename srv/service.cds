@@ -1,60 +1,21 @@
-using { deloitte.hiring as my } from '../db/schema';
-using ECPositionManagement as PosMan_API from '../srv/external/ECPositionManagement.csn';
-using ECFoundationOrganization as Foundation_API from '../srv/external/ECFoundationOrganization.csn';
+using { deloitte.hiring.db as my } from '../db/schema';
 
-service CatalogService @(path:'/hiring') {
+service CatalogService @(path:'/hiring', requires : 'authenticated-user' ) {
 
-  entity requests as SELECT from my.Requests {*} excluding { createdBy, modifiedBy };
-
-  @readonly
-  entity SF_PositionMatrixRelationships as select from PosMan_API.PositionMatrixRelationship {
-    key Position_code,
-    key matrixRelationshipType,
-    key Position_effectiveStartDate,
-        createdDateTime,
-        relatedPosition,
-        relatedPositionNav
-  };
+  entity Requests as SELECT from my.Requests {*} excluding { createdBy, modifiedBy };
+  entity Status as projection on my.Status;
+  annotate Status with @(requires: 'Admin');
 
   @readonly
-  entity SF_Positions as select from PosMan_API.Position {
-    key code,
-    key effectiveStartDate,
-        positionTitle,
-        jobTitle,
-        company,
-        businessUnit,
-        department,
-        comment,
-        costCenter,
-        createdDate,
-        createdBy,
-        division,
-        effectiveStatus,
-        externalName_defaultValue,
-        externalName_en_US,
-        jobCode,
-        positionMatrixRelationship,
-        parentPosition,
-        employeeClass
-
-  };
+  entity SF_PositionMatrixRelationships as projection on my.SF_PositionMatrixRelationships;
+  annotate Status with @(requires: 'Admin');
 
   @readonly
-  entity SF_CostCenters as select from Foundation_API.FOCostCenter {
-    key externalCode,
-    key startDate,
-        costcenterExternalObjectID,
-        costcenterManager,
-        createdDateTime,
-        description,
-        description_defaultValue,
-        createdBy
-  };
+  entity SF_Positions as projection on my.SF_Positions;
+  annotate Status with @(requires: 'Admin');
 
-//   entity template as projection on my.template;
-
-//   entity costCenter as projection on my.costCenter;
-
+  @readonly
+  entity SF_CostCenters as projection on my.SF_CostCenters;
+  annotate Status with @(requires: 'Admin');
 
 }

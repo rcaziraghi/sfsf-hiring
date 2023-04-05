@@ -1,0 +1,6 @@
+ID;name;descr;criticality
+1;Rascunho;Atividade não iniciada;0
+2;Em progresso;Atividade em progresso;2
+3;Enviado;Atividade atrasada;2
+4;Reprovado;Atividade bloqueada;1
+7;Aprovado;Atividade completada;3
