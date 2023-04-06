@@ -1,4 +1,4 @@
-using deloitte.hiring.db as service from './service';
+using deloitte.hiring.service.CatalogService as service from './service';
 
 namespace deloitte.hiring.ui;
 
@@ -83,6 +83,11 @@ annotate service.Requests with @(UI : {
             },
             {
                 $Type : 'UI.DataField',
+                Value : status_ID,
+                Label : 'Status'
+            },
+            {
+                $Type : 'UI.DataField',
                 Value : startDate,
                 Label : 'Início'
             },
@@ -121,4 +126,98 @@ annotate service.Requests @(Capabilities : {
     Insertable : true,
     Deletable  : true,
     Updatable  : true,
+});
+
+
+////////////////
+annotate service.Status with {
+    ID   @Common : {
+        Text            : name,
+        TextArrangement : #TextOnly
+    }    @title :  'ID de status';
+    name @title  : 'Status'
+}
+
+annotate service.Status with @(UI : {
+    CreateHidden    : true,
+    UpdateHidden    : true,
+    DeleteHidden    : true,
+    Identification  : [{
+        $Type : 'UI.DataField',
+        Value : name
+    }],
+    HeaderInfo      : {
+        $Type          : 'UI.HeaderInfoType',
+        TypeName       : 'Status',
+        TypeNamePlural : 'Status',
+        Title          : {
+            $Type : 'UI.DataField',
+            Value : name
+        },
+        Description    : {
+            $Type : 'UI.DataField',
+            Value : descr
+        }
+    },
+    SelectionFields : [
+        name,
+        descr
+    ],
+    LineItem        : [
+        {
+            $Type : 'UI.DataField',
+            Value : ID
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : descr,
+            Label : 'Descrição'
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : criticality,
+            Label : 'Criticalidade'
+        }
+    ],
+    HeaderFacets        : [{
+        $Type  : 'UI.ReferenceFacet',
+        Target : '@UI.FieldGroup#Detail'
+    }],
+    Facets              : [{
+        $Type  : 'UI.ReferenceFacet',
+        ID     : 'StatusDetails',
+        Target : '@UI.FieldGroup#Details',
+        Label  : 'Detalhes'
+    }],
+    FieldGroup #Detail  : {Data : [{
+        $Type : 'UI.DataField',
+        Value : name,
+        Label : 'Status'
+    }]},
+    FieldGroup #Details : {
+        $Type : 'UI.FieldGroupType',
+        Data  : [
+            {
+                $Type : 'UI.DataField',
+                Value : name,
+                Label : 'Nome'
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : descr,
+                Label : 'Descrição'
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : criticality,
+                Label : 'Criticalidade'
+            }
+        ]
+    },
+});
+
+annotate service.Status @(Capabilities : {
+    Insertable : false,
+    Deletable  : false,
+    Updatable  : false
 });

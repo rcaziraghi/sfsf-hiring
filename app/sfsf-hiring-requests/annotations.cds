@@ -1,0 +1,1 @@
+using deloitte.hiring.service.CatalogService as service from '../../srv/service';
