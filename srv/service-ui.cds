@@ -30,7 +30,7 @@ annotate service.Requests with @(UI : {
         title,
         startDate,
         status.name,
-        budgetCap
+        budgetPer
     ],
     LineItem            : [
         {
@@ -86,7 +86,7 @@ annotate service.Requests with @(UI : {
         Title : 'Título da posição'
     },
     DataPoint #budgetCapProgress : {
-        Value         : budgetCap,
+        Value         : budgetPer,
         TargetValue   : 100.0,
         Visualization : #Progress
     },
@@ -235,9 +235,10 @@ annotate service.Requests with {
         title  : 'Centro de custo'
     );
     budget @Measures.ISOCurrency: currency_code;
-    budgetCap @Measures.Unit : '%'
+    budgetCap @Measures.ISOCurrency: currency_code;
+    budgetPer @Measures.Unit : '%'
               @Common : {
-                Label: 'Budget Cap'
+                Label: 'Budget %'
               }
 }
 

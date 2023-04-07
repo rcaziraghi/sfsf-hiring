@@ -3,6 +3,7 @@ const {
     beforeSaveRequests,
     beforeCreateRequests,
     afterSaveRequests,
+    afterReadRequests,
     readSF_Positions,
     readSF_CostCenters,
     readSF_PositionMatrixRelationships,
@@ -45,4 +46,6 @@ module.exports = cds.service.impl(async function () {
 
     // AFTER events
     this.after('SAVE', Requests, afterSaveRequests);
+    this.after('READ', Requests, afterReadRequests);
+
 });

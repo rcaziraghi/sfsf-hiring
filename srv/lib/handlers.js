@@ -122,13 +122,31 @@ async function beforeSaveRequests(req) {
     }
 }
 
-//Default status
+//Default status, budget and budgetCap
 async function beforeCreateRequests(req) {
     try {
-        if(!req.data.status_ID) {
+        if (!req.data.status_ID) {
             req.data.status_ID = 1;
         }
         return req;
+    } catch (err) {
+        req.error(err.code, err.message);
+    }
+}
+
+async function afterReadRequests(Requests, req) {
+    try {
+        // return Requests.map(Request => {
+            // Request.budget = 70.00;
+            // Request.budgetCap = 100.00;
+            if (Requests.budget && Requests.budgetCap && Requests.budgetCap > 0) {
+                Requests.budgetPer = Math.abs((Requests.budget / Requests.budgetCap) * 100);
+                Requests.budgetCriticality = Requests.budgetPer >= 0 && Requests.budgetPer <= 50 ? 5 : Requests.budgetPer >= 51 && Requests.budgetPer <= 70 ? 3 : Requests.budgetPer >= 71 && Requests.budgetPer <= 99 ? 2 : Requests.budgetPer >= 100 ? 1 : 0;
+            } else {
+                Requests.budgetPer = 0.00;
+                Requests.budgetCriticality = 0;
+            }
+        // })
     } catch (err) {
         req.error(err.code, err.message);
     }
@@ -292,6 +310,7 @@ module.exports = {
     beforeSaveRequests,
     beforeCreateRequests,
     afterSaveRequests,
+    afterReadRequests,
     readSF_Positions,
     readSF_CostCenters,
     readSF_PositionMatrixRelationships,

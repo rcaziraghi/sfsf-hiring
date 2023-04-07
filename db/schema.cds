@@ -11,8 +11,8 @@ entity Requests : cuid {
   position  : Association to one Positions;
   costCenter : Association to one CostCenters;
   startDate  : DateTime;
-  budgetCap : Integer;
-  budget: Integer;
+  budgetCap : Decimal;
+  budget: Decimal;
   currency : Currency;
   comments : localized String;
 }

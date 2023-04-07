@@ -5,7 +5,12 @@ namespace deloitte.hiring.service;
 service CatalogService @(path:'/hiring', requires : 'authenticated-user' ) {
 
   @odata.draft.enabled
-  entity Requests as SELECT from my.Requests {*} excluding { createdBy, modifiedBy };
+  entity Requests as 
+    SELECT from my.Requests {
+        *
+        ,null as budgetPer: Decimal,
+        null as budgetCriticality: Integer
+        } excluding { createdBy, modifiedBy };
   entity Status as projection on my.Status;
   annotate Status with @(requires: 'Admin');
 
