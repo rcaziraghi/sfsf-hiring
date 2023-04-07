@@ -1,5 +1,7 @@
-const cds = require('@sap/cds');
+const cds = require('@sap/cds'); 
+require('./workarounds');
 const {
+    onSendRequestForApproval,
     beforeSaveRequests,
     beforeCreateRequests,
     afterSaveRequests,
@@ -27,6 +29,9 @@ module.exports = cds.service.impl(async function () {
     } = this.entities;
 
     /*** HANDLERS REGISTRATION ***/
+    // Actions
+    this.on('sendRequestForApproval', onSendRequestForApproval)
+
     // ON events
     this.on('READ', SF_Positions, readSF_Positions);
     this.on('READ', SF_CostCenters, readSF_CostCenters);

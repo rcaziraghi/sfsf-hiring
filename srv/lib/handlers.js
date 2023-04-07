@@ -36,6 +36,16 @@ function removeColumnsFromOrderBy(query, columnNames) {
 
 /*** HANDLERS ***/
 
+///Actions
+//onSendRequestForApproval
+async function onSendRequestForApproval(req) {
+    try {
+        await UPDATE(req._target).with({status_ID:3});
+    } catch (err) {
+        req.error(err.code, err.message);
+    }
+}
+
 // Read SF Positions
 async function readSF_Positions(req) {
     try {
@@ -126,7 +136,7 @@ async function beforeSaveRequests(req) {
 async function beforeCreateRequests(req) {
     try {
         if (!req.data.status_ID) {
-            req.data.status_ID = 1;
+            req.data.status_ID = 2;
         }
         return req;
     } catch (err) {
@@ -136,20 +146,34 @@ async function beforeCreateRequests(req) {
 
 async function afterReadRequests(Requests, req) {
     try {
-        // return Requests.map(Request => {
-            // Request.budget = 70.00;
-            // Request.budgetCap = 100.00;
-            if (Requests.budget && Requests.budgetCap && Requests.budgetCap > 0) {
-                Requests.budgetPer = Math.abs((Requests.budget / Requests.budgetCap) * 100);
-                Requests.budgetCriticality = Requests.budgetPer >= 0 && Requests.budgetPer <= 50 ? 5 : Requests.budgetPer >= 51 && Requests.budgetPer <= 70 ? 3 : Requests.budgetPer >= 71 && Requests.budgetPer <= 99 ? 2 : Requests.budgetPer >= 100 ? 1 : 0;
-            } else {
-                Requests.budgetPer = 0.00;
-                Requests.budgetCriticality = 0;
-            }
-        // })
+        if (Array.isArray(Requests)) {
+            return Promise.all(Requests.map(async Request => {
+                Request = await updateBudgetInfo(Request, req);
+            }))
+        } else {
+            Requests = await updateBudgetInfo(Requests, req);
+        }
+        console.log(Requests);
+        return Requests;
     } catch (err) {
         req.error(err.code, err.message);
     }
+}
+
+async function updateBudgetInfo(Request, req) {
+    let RequestBudget = await cds.tx(req).run(SELECT.one.from(namespace + 'Requests').columns(['budget', 'budgetCap']).where({
+        ID: {
+            '=': Request.ID
+        }
+    }));
+    if (RequestBudget.budget && RequestBudget.budgetCap && RequestBudget.budgetCap > 0 && RequestBudget.budget > 0) {
+        Request.budgetPer = Math.abs((RequestBudget.budget / RequestBudget.budgetCap) * 100);
+        Request.budgetCriticality = Request.budgetPer >= 0 && Request.budgetPer <= 50 ? 5 : Request.budgetPer >= 51 && Request.budgetPer <= 70 ? 3 : Request.budgetPer >= 71 && Request.budgetPer <= 99 ? 2 : Request.budgetPer >= 100 ? 1 : 0;
+    } else {
+        Request.budgetPer = 0.00;
+        Request.budgetCriticality = 0;
+    }
+    return Request;
 }
 
 async function afterSaveRequests(req) {
@@ -307,6 +331,7 @@ async function beforeDeleteCostCenters(req) {
 }
 
 module.exports = {
+    onSendRequestForApproval,
     beforeSaveRequests,
     beforeCreateRequests,
     afterSaveRequests,

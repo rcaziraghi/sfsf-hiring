@@ -11,6 +11,7 @@ annotate service.Requests with @(UI : {
     DeleteHidden        : false,
     CreateHidden        : false,
     Identification      : [
+        { $Type  : 'UI.DataFieldForAction', Action : 'deloitte.hiring.service.CatalogService.sendRequestForApproval', Label  : 'Enviar para aprovação'   },
         {Value : title}
     ],
     HeaderInfo          : {
@@ -40,6 +41,14 @@ annotate service.Requests with @(UI : {
         {
             $Type : 'UI.DataField',
             Value : startDate
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : budgetPer
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : budget
         },
         {
             $Type : 'UI.DataField',
@@ -88,7 +97,8 @@ annotate service.Requests with @(UI : {
     DataPoint #budgetCapProgress : {
         Value         : budgetPer,
         TargetValue   : 100.0,
-        Visualization : #Progress
+        Visualization : #Progress,
+        Criticality : budgetCriticality
     },
     DataPoint #status : {
         Value       : status_ID,
@@ -234,12 +244,18 @@ annotate service.Requests with {
         },
         title  : 'Centro de custo'
     );
-    budget @Measures.ISOCurrency: currency_code;
-    budgetCap @Measures.ISOCurrency: currency_code;
-    budgetPer @Measures.Unit : '%'
-              @Common : {
-                Label: 'Budget %'
-              }
+    budget      @Measures.ISOCurrency: currency_code
+                @Common : {
+                    Label: 'Budget actual'
+                };
+    budgetCap   @Measures.ISOCurrency: currency_code
+                @Common : {
+                    Label: 'Budget Max'
+                };
+    budgetPer   @Measures.Unit : '%'
+                @Common : {
+                    Label: 'Budget %'
+                };
 }
 
 annotate service.Requests @(Capabilities : {

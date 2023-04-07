@@ -7,10 +7,22 @@ service CatalogService @(path:'/hiring', requires : 'authenticated-user' ) {
   @odata.draft.enabled
   entity Requests as 
     SELECT from my.Requests {
-        *
-        ,null as budgetPer: Decimal,
+        *,
+        null as budgetPer: Decimal,
         null as budgetCriticality: Integer
-        } excluding { createdBy, modifiedBy };
+        } excluding { createdBy, modifiedBy } 
+      actions {
+        action sendRequestForApproval()
+    };
+
+  annotate Requests with actions {
+    sendRequestForApproval @(
+    Core.OperationAvailable : {
+      $edmJson: { $Eq: [{ $Path: 'in/status_ID'}, 1]}
+    },
+   Common.SideEffects.TargetProperties : ['in/status_ID'], ) };
+
+
   entity Status as projection on my.Status;
   annotate Status with @(requires: 'Admin');
 
