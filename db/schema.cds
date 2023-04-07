@@ -8,8 +8,8 @@ entity Requests : cuid {
   title  : localized String;
   //template  : Association to one Templates;
   status : Association to one Status;
-  position  : Association to one SF_Positions;
-  costCenter : Association to one SF_CostCenters;
+  position  : Association to one Positions;
+  costCenter : Association to one CostCenters;
   startDate  : DateTime;
   budgetCap : Integer;
   budget: Integer;
@@ -21,69 +21,91 @@ entity Requests : cuid {
 @cds.autoexpose
 entity Status : sap.common.CodeList {
     key ID : Integer;
-        name: String;
-        descr: String; 
+        name: localized String;
+        descr: localized String; 
         criticality: Integer;
 }
 
 @readonly
 @cds.autoexpose
 entity Positions {
-    code : String;
+    key code : String;
+    key effectiveStartDate : String;
+        positionTitle : String;
+        jobTitle : String;
+        company : String;
+        businessUnit : String;
+        department : String;
+        comment : String;
+        costCenter : String;
+        createdDate : String;
+        createdBy : String;
+        division : String;
+        effectiveStatus : String;
+        externalName_defaultValue : String;
+        externalName_en_US : String;
+        jobCode : String;
+        positionMatrixRelationship : String;
+        parentPosition : String;
+        employeeClass : String;
 }
 
 @readonly
 @cds.autoexpose
-entity Jobs {
-    externalCode: String;
-    jobFunction: Association to one JobFunctions;
-}
-
-@readonly
-@cds.autoexpose
-entity JobFunctions {
-    externalCode: String;
-    description_defaultValue: String;
-    name_localized: String;
-}
-
-@readonly
-@cds.autoexpose
-entity Templates {
-    code: String;
-}
-
-@readonly
-@cds.autoexpose
-entity Companies {
-    externalCode: String;
-    description_defaultValue: String; 
-}
-
-@readonly
-@cds.autoexpose
-entity BusinessUnits {
-    externalCode: String;
-    entityUUID: UUID;
-    description_defaultValue: String; 
-}
-
-@readonly
-@cds.autoexpose
-entity Departments {
-    externalCode: String;
-    entityUUID: UUID;
-    description_defaultValue: String; 
+entity CostCenters {
+    key externalCode : String;
+    key startDate : String;
+        costcenterExternalObjectID : String;
+        costcenterManager : String;
+        createdDateTime : String;
+        description : localized String;
+        description_defaultValue : localized String;
+        createdBy : String;
 }
 
 // @readonly
 // @cds.autoexpose
-// entity CostCenters {
+// entity Jobs {
+//     externalCode: String;
+//     jobFunction: Association to one JobFunctions;
+// }
+
+// @readonly
+// @cds.autoexpose
+// entity JobFunctions {
+//     externalCode: String;
+//     description_defaultValue: String;
+//     name_localized: String;
+// }
+
+// @readonly
+// @cds.autoexpose
+// entity Templates {
+//     code: String;
+// }
+
+// @readonly
+// @cds.autoexpose
+// entity Companies {
 //     externalCode: String;
 //     description_defaultValue: String; 
 // }
 
+// @readonly
+// @cds.autoexpose
+// entity BusinessUnits {
+//     externalCode: String;
+//     entityUUID: UUID;
+//     description_defaultValue: String; 
+// }
 
+// @readonly
+// @cds.autoexpose
+// entity Departments {
+//     externalCode: String;
+//     entityUUID: UUID;
+//     description_defaultValue: String; 
+// }
 
 entity SF_PositionMatrixRelationships as select from PosMan_API.PositionMatrixRelationship {
     key Position_code,

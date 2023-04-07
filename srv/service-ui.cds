@@ -5,7 +5,7 @@ namespace deloitte.hiring.ui;
 ////////////////////////////////////////////////////////////////////////////
 //
 // UI annotations for the Root Entity
-//
+// Requests
 annotate service.Requests with @(UI : {
     UpdateHidden        : false,
     DeleteHidden        : false,
@@ -54,26 +54,56 @@ annotate service.Requests with @(UI : {
     ],
     HeaderFacets        : [{
         $Type  : 'UI.ReferenceFacet',
-        Target : '@UI.FieldGroup#Detail'
+        Target : '@UI.DataPoint#status'
+        },
+        {
+        $Type : 'UI.ReferenceFacet',
+        Target : '@UI.DataPoint#budgetCapProgress',
     }],
     Facets              : [
         {
             $Type  : 'UI.ReferenceFacet',
             ID     : 'RequestDetails',
-            Target : '@UI.FieldGroup#Details',
+            Target : '@UI.FieldGroup#RequestDetails',
             Label  : 'Detalhes'
+        },
+        {
+            $Type  : 'UI.ReferenceFacet',
+            ID     : 'BudgetDetails',
+            Target : '@UI.FieldGroup#BudgetDetails',
+            Label  : 'Budget'
+        }
+        ,
+        {
+            $Type  : 'UI.ReferenceFacet',
+            ID     : 'Comments',
+            Target : '@UI.FieldGroup#Comments',
+            Label  : 'Comentários'
         }
     ],
     DataPoint #title : {
         Value : title,
         Title : 'Título da posição'
     },
-    FieldGroup #Detail  : {Data : [{
-        $Type       : 'UI.DataField',
+    DataPoint #budgetCapProgress : {
+        Value         : budgetCap,
+        TargetValue   : 100.0,
+        Visualization : #Progress
+    },
+    DataPoint #status : {
         Value       : status_ID,
         Criticality : status.criticality
-    }]},
-    FieldGroup #Details : {
+    },
+    FieldGroup #Header  : {
+        Data : [
+            {
+                $Type       : 'UI.DataField',
+                Value       : status_ID,
+                Criticality : status.criticality
+            }
+        ]
+    },
+    FieldGroup #RequestDetails : {
         $Type : 'UI.FieldGroupType',
         Data  : [
             {
@@ -83,14 +113,39 @@ annotate service.Requests with @(UI : {
             },
             {
                 $Type : 'UI.DataField',
-                Value : status_ID,
-                Label : 'Status'
+                Value : position_code,
+                Label : 'Posição'
             },
             {
                 $Type : 'UI.DataField',
                 Value : startDate,
                 Label : 'Início'
+            }
+        ]
+    },
+    FieldGroup #BudgetDetails : {
+        $Type : 'UI.FieldGroupType',
+        Data  : [
+            {
+                $Type : 'UI.DataField',
+                Value : costCenter_externalCode,
+                Label : 'Centro de Custo'
             },
+            {
+                $Type : 'UI.DataField',
+                Value : budget,
+                Label : 'Budget'
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : budgetCap,
+                Label : 'Budget Cap'
+            }           
+        ]
+    },
+    FieldGroup #Comments : {
+        $Type : 'UI.FieldGroupType',
+        Data  : [
             {
                 $Type : 'UI.DataField',
                 Value : comments,
@@ -116,10 +171,74 @@ annotate service.Requests with {
             Text            : status.name,
             TextArrangement : #TextOnly,
             ValueListWithFixedValues,
-            FieldControl    : #Mandatory
+            FieldControl    : #ReadOnly,
+            DefaultValuesFunction : '1',
         },
-        title  : 'Status'
+        title  : 'Status',
     );
+    position @(
+        Common : {
+            Text            : position.positionTitle,
+            TextArrangement : #TextFirst,
+            FieldControl    : #Mandatory,
+            ValueList       : {
+                $Type          : 'Common.ValueListType',
+                CollectionPath : 'SF_Positions',
+                Parameters     : [
+                    {
+                        $Type             : 'Common.ValueListParameterInOut',
+                        LocalDataProperty : 'position_code',
+                        ValueListProperty : 'code'
+                    },
+                    {
+                        $Type             : 'Common.ValueListParameterInOut',
+                        LocalDataProperty : 'position_effectiveStartDate',
+                        ValueListProperty : 'effectiveStartDate'
+                    },
+                    {
+                        $Type             : 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty : 'positionTitle'
+                    }
+                ],
+                Label : 'Posições'
+            }
+        },
+        title  : 'Posição'
+    );
+    costCenter      @(
+        Common : {
+            Text            : costCenter.description,
+            TextArrangement : #TextFirst,
+            FieldControl    : #Mandatory,
+            ValueList       : {
+                $Type          : 'Common.ValueListType',
+                CollectionPath : 'SF_CostCenters',
+                Parameters     : [
+                    {
+                        $Type             : 'Common.ValueListParameterInOut',
+                        LocalDataProperty : 'costCenter_externalCode',
+                        ValueListProperty : 'externalCode'
+                    },
+                    {
+                        $Type             : 'Common.ValueListParameterInOut',
+                        LocalDataProperty : 'costCenter_startDate',
+                        ValueListProperty : 'startDate'
+                    },
+                    {
+                        $Type             : 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty : 'description'
+                    }
+                ],
+                Label : 'Centros de custo'
+            }
+        },
+        title  : 'Centro de custo'
+    );
+    budget @Measures.ISOCurrency: currency_code;
+    budgetCap @Measures.Unit : '%'
+              @Common : {
+                Label: 'Budget Cap'
+              }
 }
 
 annotate service.Requests @(Capabilities : {
@@ -128,8 +247,7 @@ annotate service.Requests @(Capabilities : {
     Updatable  : true,
 });
 
-
-////////////////
+//////////////// Status
 annotate service.Status with {
     ID   @Common : {
         Text            : name,
@@ -217,6 +335,108 @@ annotate service.Status with @(UI : {
 });
 
 annotate service.Status @(Capabilities : {
+    Insertable : false,
+    Deletable  : false,
+    Updatable  : false
+});
+
+//////////////// Positions
+annotate service.Positions with {
+    code   @Common : {
+        Text            : positionTitle,
+        TextArrangement : #TextOnly
+    }    @title :  'Posição';
+    // effectiveStartDate   @Common : {
+    //     Text            : positionTitle,
+    //     TextArrangement : #TextOnly
+    // }    @title :  'Posição';
+    positionTitle @title  : 'Título'
+}
+
+annotate service.Positions with @(UI : {
+    CreateHidden    : true,
+    UpdateHidden    : true,
+    DeleteHidden    : true,
+    Identification  : [{
+        $Type : 'UI.DataField',
+        Value : positionTitle
+    }],
+    HeaderInfo      : {
+        $Type          : 'UI.HeaderInfoType',
+        TypeName       : 'Posição',
+        TypeNamePlural : 'Posições',
+        Title          : {
+            $Type : 'UI.DataField',
+            Value : positionTitle
+        },
+        Description    : {
+            $Type : 'UI.DataField',
+            Value : externalName_defaultValue
+        }
+    },
+    SelectionFields : [
+        positionTitle,
+        externalName_defaultValue
+    ],
+    LineItem        : [
+        {
+            $Type : 'UI.DataField',
+            Value : code
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : effectiveStartDate,
+            Label : 'Data de início'
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : positionTitle,
+            Label : 'Título'
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : externalName_defaultValue,
+            Label : 'Descrição'
+        }
+    ],
+    HeaderFacets        : [{
+        $Type  : 'UI.ReferenceFacet',
+        Target : '@UI.FieldGroup#Detail'
+    }],
+    Facets              : [{
+        $Type  : 'UI.ReferenceFacet',
+        ID     : 'StatusDetails',
+        Target : '@UI.FieldGroup#Details',
+        Label  : 'Detalhes'
+    }],
+    FieldGroup #Detail  : {Data : [{
+        $Type : 'UI.DataField',
+        Value : positionTitle,
+        Label : 'Status'
+    }]},
+    FieldGroup #Details : {
+        $Type : 'UI.FieldGroupType',
+        Data  : [
+            {
+                $Type : 'UI.DataField',
+                Value : positionTitle,
+                Label : 'Nome'
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : externalName_defaultValue,
+                Label : 'Descrição'
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : comment,
+                Label : 'Comentário'
+            }
+        ]
+    },
+});
+
+annotate service.Positions @(Capabilities : {
     Insertable : false,
     Deletable  : false,
     Updatable  : false

@@ -55,6 +55,9 @@
         }
     },
     "cds": {
+        "hana": {
+            "deploy-format": "hdbtable"
+        },
         "requires": {
             "auth": {
                 "[development]": {
@@ -91,11 +94,11 @@
             },
             "[hybrid]": {
                 "db": {
-                    "kind": "hana-cloud"
+                    "kind": "hana"
                 }
             },
             "db": {
-                "kind": "hana-cloud"
+                "kind": "hana"
             }
         }
     },

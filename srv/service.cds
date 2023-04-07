@@ -9,6 +9,13 @@ service CatalogService @(path:'/hiring', requires : 'authenticated-user' ) {
   entity Status as projection on my.Status;
   annotate Status with @(requires: 'Admin');
 
+  entity Positions as 
+    select from my.Positions {
+    * 
+    // , SF_Position.externalName_defaultValue as Position_name
+  };
+  annotate Positions with @(requires: 'Admin');
+
   @readonly
   entity SF_PositionMatrixRelationships as projection on my.SF_PositionMatrixRelationships;
   annotate SF_PositionMatrixRelationships with @(requires: 'Admin');
