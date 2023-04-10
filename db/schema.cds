@@ -1,66 +1,72 @@
-using { Currency, managed, cuid, sap } from '@sap/cds/common';
+using {
+    Currency,
+    managed,
+    cuid,
+    sap
+} from '@sap/cds/common';
 using ECPositionManagement as PosMan_API from '../srv/external/ECPositionManagement.csn';
 using ECFoundationOrganization as Foundation_API from '../srv/external/ECFoundationOrganization.csn';
 
 namespace deloitte.hiring.db;
 
 entity Requests : cuid {
-  title  : localized String;
-  //template  : Association to one Templates;
-  status : Association to one Status;
-  position  : Association to one Positions;
-  costCenter : Association to one CostCenters;
-  startDate  : DateTime;
-  budgetCap : Decimal;
-  budget: Decimal;
-  currency : Currency;
-  comments : localized String;
+    title      : localized String;
+    //template  : Association to one Templates;
+    status     : Association to one Status;
+    position   : Association to one Positions;
+    costCenter : Association to one CostCenters;
+    company    : Association to one Companies;
+    startDate  : DateTime;
+    budgetCap  : Decimal;
+    budget     : Decimal;
+    currency   : Currency;
+    comments   : localized String;
 }
 
 @readonly
 @cds.autoexpose
 entity Status : sap.common.CodeList {
-    key ID : Integer;
-        name: localized String;
-        descr: localized String; 
-        criticality: Integer;
+    key ID          : Integer;
+        name        : localized String;
+        descr       : localized String;
+        criticality : Integer;
 }
 
 @readonly
 @cds.autoexpose
 entity Positions {
-    key code : String;
-    key effectiveStartDate : String;
-        positionTitle : String;
-        jobTitle : String;
-        company : String;
-        businessUnit : String;
-        department : String;
-        comment : String;
-        costCenter : String;
-        createdDate : String;
-        createdBy : String;
-        division : String;
-        effectiveStatus : String;
-        externalName_defaultValue : String;
-        externalName_en_US : String;
-        jobCode : String;
+    key code                       : String;
+    key effectiveStartDate         : String;
+        positionTitle              : String;
+        jobTitle                   : String;
+        company                    : String;
+        businessUnit               : String;
+        department                 : String;
+        comment                    : String;
+        costCenter                 : String;
+        createdDate                : String;
+        createdBy                  : String;
+        division                   : String;
+        effectiveStatus            : String;
+        externalName_defaultValue  : String;
+        externalName_en_US         : String;
+        jobCode                    : String;
         positionMatrixRelationship : String;
-        parentPosition : String;
-        employeeClass : String;
+        parentPosition             : String;
+        employeeClass              : String;
 }
 
 @readonly
 @cds.autoexpose
 entity CostCenters {
-    key externalCode : String;
-    key startDate : String;
+    key externalCode               : String;
+    key startDate                  : String;
         costcenterExternalObjectID : String;
-        costcenterManager : String;
-        createdDateTime : String;
-        description : localized String;
-        description_defaultValue : localized String;
-        createdBy : String;
+        costcenterManager          : String;
+        createdDateTime            : String;
+        description                : localized String;
+        description_defaultValue   : localized String;
+        createdBy                  : String;
 }
 
 // @readonly
@@ -84,68 +90,167 @@ entity CostCenters {
 //     code: String;
 // }
 
-// @readonly
-// @cds.autoexpose
-// entity Companies {
-//     externalCode: String;
-//     description_defaultValue: String; 
-// }
+@readonly
+@cds.autoexpose
+entity Companies {
+    key externalCode             : String;
+    key startDate                : String;
+        country                  : String;
+        createdBy                : String;
+        createdDateTime          : String;
+        createdOn                : String;
+        currency                 : String;
+        defaultLocation          : String;
+        defaultPayGroup          : String;
+        description              : String;
+        description_de_DE        : String;
+        description_defaultValue : String;
+        description_en_GB        : String;
+        description_en_US        : String;
+        description_es_ES        : String;
+        description_fr_FR        : String;
+        description_ja_JP        : String;
+        description_ko_KR        : String;
+        description_localized    : String;
+        description_nl_NL        : String;
+        description_pt_BR        : String;
+        description_pt_PT        : String;
+        description_ru_RU        : String;
+        description_zh_CN        : String;
+        description_zh_TW        : String;
+        endDate                  : String;
+        lastModifiedBy           : String;
+        lastModifiedDateTime     : String;
+        lastModifiedOn           : String;
+        name                     : String;
+        name_de_DE               : String;
+        name_defaultValue        : String;
+        name_en_GB               : String;
+        name_en_US               : String;
+        name_es_ES               : String;
+        name_fr_FR               : String;
+        name_ja_JP               : String;
+        name_ko_KR               : String;
+        name_localized           : String;
+        name_nl_NL               : String;
+        name_pt_BR               : String;
+        name_pt_PT               : String;
+        name_ru_RU               : String;
+        name_zh_CN               : String;
+        name_zh_TW               : String;
+        standardHours            : Integer;
+        status                   : String;
+}
 
-// @readonly
-// @cds.autoexpose
-// entity BusinessUnits {
-//     externalCode: String;
-//     entityUUID: UUID;
-//     description_defaultValue: String; 
-// }
+@readonly
+@cds.autoexpose
+entity BusinessUnits {
+    externalCode             : String;
+    entityUUID               : UUID;
+    description_defaultValue : String;
+}
 
-// @readonly
-// @cds.autoexpose
-// entity Departments {
-//     externalCode: String;
-//     entityUUID: UUID;
-//     description_defaultValue: String; 
-// }
+@readonly
+@cds.autoexpose
+entity Departments {
+    externalCode             : String;
+    entityUUID               : UUID;
+    description_defaultValue : String;
+}
 
-entity SF_PositionMatrixRelationships as select from PosMan_API.PositionMatrixRelationship {
-    key Position_code,
-    key matrixRelationshipType,
-    key Position_effectiveStartDate,
-        createdDateTime,
-        relatedPosition,
-        relatedPositionNav
-};
+entity SF_PositionMatrixRelationships as
+    select from PosMan_API.PositionMatrixRelationship {
+        key Position_code,
+        key matrixRelationshipType,
+        key Position_effectiveStartDate,
+            createdDateTime,
+            relatedPosition,
+            relatedPositionNav
+    };
 
-entity SF_Positions as select from PosMan_API.Position {
-    key code,
-    key effectiveStartDate,
-        positionTitle,
-        jobTitle,
-        company,
-        businessUnit,
-        department,
-        comment,
-        costCenter,
-        createdDate,
-        createdBy,
-        division,
-        effectiveStatus,
-        externalName_defaultValue,
-        externalName_en_US,
-        jobCode,
-        positionMatrixRelationship,
-        parentPosition,
-        employeeClass
+entity SF_Positions                   as
+    select from PosMan_API.Position {
+        key code,
+        key effectiveStartDate,
+            positionTitle,
+            jobTitle,
+            company,
+            businessUnit,
+            department,
+            comment,
+            costCenter,
+            createdDate,
+            createdBy,
+            division,
+            effectiveStatus,
+            externalName_defaultValue,
+            externalName_en_US,
+            jobCode,
+            positionMatrixRelationship,
+            parentPosition,
+            employeeClass
 
-};
+    };
 
-entity SF_CostCenters as select from Foundation_API.FOCostCenter {
-    key externalCode,
-    key startDate,
-        costcenterExternalObjectID,
-        costcenterManager,
-        createdDateTime,
-        description,
-        description_defaultValue,
-        createdBy
-};
+entity SF_CostCenters                 as
+    select from Foundation_API.FOCostCenter {
+        key externalCode,
+        key startDate,
+            costcenterExternalObjectID,
+            costcenterManager,
+            createdDateTime,
+            description,
+            description_defaultValue,
+            createdBy
+    };
+
+entity SF_Companies                   as
+    select from Foundation_API.FOCompany {
+        key externalCode,
+        key startDate,
+            country,
+            createdBy,
+            createdDateTime,
+            createdOn,
+            currency,
+            defaultLocation,
+            defaultPayGroup,
+            description,
+            description_de_DE,
+            description_defaultValue,
+            description_en_GB,
+            description_en_US,
+            description_es_ES,
+            description_fr_FR,
+            description_ja_JP,
+            description_ko_KR,
+            description_localized,
+            description_nl_NL,
+            description_pt_BR,
+            description_pt_PT,
+            description_ru_RU,
+            description_zh_CN,
+            description_zh_TW,
+            endDate,
+            lastModifiedBy,
+            lastModifiedDateTime,
+            lastModifiedOn,
+            name,
+            name_de_DE,
+            name_defaultValue,
+            name_en_GB,
+            name_en_US,
+            name_es_ES,
+            name_fr_FR,
+            name_ja_JP,
+            name_ko_KR,
+            name_localized,
+            name_nl_NL,
+            name_pt_BR,
+            name_pt_PT,
+            name_ru_RU,
+            name_zh_CN,
+            name_zh_TW,
+            standardHours,
+            status
+    };

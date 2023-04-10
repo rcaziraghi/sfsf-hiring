@@ -7,14 +7,18 @@ namespace deloitte.hiring.ui;
 // UI annotations for the Root Entity
 // Requests
 annotate service.Requests with @(UI : {
-    UpdateHidden        : false,
-    DeleteHidden        : false,
-    CreateHidden        : false,
-    Identification      : [
-        { $Type  : 'UI.DataFieldForAction', Action : 'deloitte.hiring.service.CatalogService.sendRequestForApproval', Label  : 'Enviar para aprovação'   },
+    UpdateHidden                      : false,
+    DeleteHidden                      : false,
+    CreateHidden                      : false,
+    Identification                    : [
+        {
+            $Type  : 'UI.DataFieldForAction',
+            Action : 'deloitte.hiring.service.CatalogService.sendRequestForApproval',
+            Label  : 'Enviar para aprovação'
+        },
         {Value : title}
     ],
-    HeaderInfo          : {
+    HeaderInfo                        : {
         $Type          : 'UI.HeaderInfoType',
         TypeName       : 'Solicitação',
         TypeNamePlural : 'Solicitações',
@@ -27,13 +31,13 @@ annotate service.Requests with @(UI : {
             Value : status.name
         }
     },
-    SelectionFields     : [
+    SelectionFields                   : [
         title,
         startDate,
         status.name,
         budgetPer
     ],
-    LineItem            : [
+    LineItem                          : [
         {
             $Type : 'UI.DataField',
             Value : title
@@ -61,15 +65,17 @@ annotate service.Requests with @(UI : {
             ![@UI.Importance] : #High
         }
     ],
-    HeaderFacets        : [{
-        $Type  : 'UI.ReferenceFacet',
-        Target : '@UI.DataPoint#status'
+    HeaderFacets                      : [
+        {
+            $Type  : 'UI.ReferenceFacet',
+            Target : '@UI.DataPoint#status'
         },
         {
-        $Type : 'UI.ReferenceFacet',
-        Target : '@UI.DataPoint#budgetCapProgress',
-    }],
-    Facets              : [
+            $Type  : 'UI.ReferenceFacet',
+            Target : '@UI.DataPoint#budgetCapProgress',
+        }
+    ],
+    Facets                            : [
         {
             $Type  : 'UI.ReferenceFacet',
             ID     : 'RequestDetails',
@@ -78,11 +84,16 @@ annotate service.Requests with @(UI : {
         },
         {
             $Type  : 'UI.ReferenceFacet',
+            ID     : 'OrganizationalDetails',
+            Target : '@UI.FieldGroup#OrganizationalDetails',
+            Label  : 'Organização'
+        },
+        {
+            $Type  : 'UI.ReferenceFacet',
             ID     : 'BudgetDetails',
             Target : '@UI.FieldGroup#BudgetDetails',
             Label  : 'Budget'
-        }
-        ,
+        },
         {
             $Type  : 'UI.ReferenceFacet',
             ID     : 'Comments',
@@ -90,30 +101,26 @@ annotate service.Requests with @(UI : {
             Label  : 'Comentários'
         }
     ],
-    DataPoint #title : {
+    DataPoint #title                  : {
         Value : title,
         Title : 'Título da posição'
     },
-    DataPoint #budgetCapProgress : {
+    DataPoint #budgetCapProgress      : {
         Value         : budgetPer,
         TargetValue   : 100.0,
         Visualization : #Progress,
-        Criticality : budgetCriticality
+        Criticality   : budgetCriticality
     },
-    DataPoint #status : {
+    DataPoint #status                 : {
         Value       : status_ID,
         Criticality : status.criticality
     },
-    FieldGroup #Header  : {
-        Data : [
-            {
-                $Type       : 'UI.DataField',
-                Value       : status_ID,
-                Criticality : status.criticality
-            }
-        ]
-    },
-    FieldGroup #RequestDetails : {
+    FieldGroup #Header                : {Data : [{
+        $Type       : 'UI.DataField',
+        Value       : status_ID,
+        Criticality : status.criticality
+    }]},
+    FieldGroup #RequestDetails        : {
         $Type : 'UI.FieldGroupType',
         Data  : [
             {
@@ -124,7 +131,7 @@ annotate service.Requests with @(UI : {
             {
                 $Type : 'UI.DataField',
                 Value : position_code,
-                Label : 'Posição'
+                Label : 'Posição template'
             },
             {
                 $Type : 'UI.DataField',
@@ -133,7 +140,15 @@ annotate service.Requests with @(UI : {
             }
         ]
     },
-    FieldGroup #BudgetDetails : {
+    FieldGroup #OrganizationalDetails : {
+        $Type : 'UI.FieldGroupType',
+        Data  : [{
+            $Type : 'UI.DataField',
+            Value : company_externalCode,
+            Label : 'Empresa'
+        }, ]
+    },
+    FieldGroup #BudgetDetails         : {
         $Type : 'UI.FieldGroupType',
         Data  : [
             {
@@ -150,43 +165,41 @@ annotate service.Requests with @(UI : {
                 $Type : 'UI.DataField',
                 Value : budgetCap,
                 Label : 'Budget Cap'
-            }           
-        ]
-    },
-    FieldGroup #Comments : {
-        $Type : 'UI.FieldGroupType',
-        Data  : [
-            {
-                $Type : 'UI.DataField',
-                Value : comments,
-                Label : 'Comentários'
             }
         ]
+    },
+    FieldGroup #Comments              : {
+        $Type : 'UI.FieldGroupType',
+        Data  : [{
+            $Type : 'UI.DataField',
+            Value : comments,
+            Label : 'Comentários'
+        }]
     },
 });
 
 annotate service.Requests with {
-    ID          @(
+    ID         @(
         title     : 'ID da Requisição',
         UI.Hidden : true
-    )           @readonly;
-    title        @(title : 'Título da Posição');
-    comments @(
+    )  @readonly;
+    title      @(title : 'Título da Posição');
+    comments   @(
         title : 'Comentários',
         UI.MultiLineText
     );
-    startDate   @(title : 'Início');
-    status      @(
+    startDate  @(title : 'Início');
+    status     @(
         Common : {
-            Text            : status.name,
-            TextArrangement : #TextOnly,
+            Text                  : status.name,
+            TextArrangement       : #TextOnly,
             ValueListWithFixedValues,
-            FieldControl    : #ReadOnly,
+            FieldControl          : #ReadOnly,
             DefaultValuesFunction : '1',
         },
         title  : 'Status',
     );
-    position @(
+    position   @(
         Common : {
             Text            : position.positionTitle,
             TextArrangement : #TextFirst,
@@ -210,12 +223,12 @@ annotate service.Requests with {
                         ValueListProperty : 'positionTitle'
                     }
                 ],
-                Label : 'Posições'
+                Label          : 'Posições'
             }
         },
         title  : 'Posição'
     );
-    costCenter      @(
+    costCenter @(
         Common : {
             Text            : costCenter.description,
             TextArrangement : #TextFirst,
@@ -239,23 +252,50 @@ annotate service.Requests with {
                         ValueListProperty : 'description'
                     }
                 ],
-                Label : 'Centros de custo'
+                Label          : 'Centros de custo'
             }
         },
         title  : 'Centro de custo'
     );
-    budget      @Measures.ISOCurrency: currency_code
-                @Common : {
-                    Label: 'Budget actual'
-                };
-    budgetCap   @Measures.ISOCurrency: currency_code
-                @Common : {
-                    Label: 'Budget Max'
-                };
-    budgetPer   @Measures.Unit : '%'
-                @Common : {
-                    Label: 'Budget %'
-                };
+    company    @(
+        Common : {
+            Text            : company.name_defaultValue,
+            TextArrangement : #TextFirst,
+            FieldControl    : #Mandatory,
+            ValueList       : {
+                $Type          : 'Common.ValueListType',
+                CollectionPath : 'SF_Companies',
+                Parameters     : [
+                    {
+                        $Type             : 'Common.ValueListParameterInOut',
+                        LocalDataProperty : 'company_externalCode',
+                        ValueListProperty : 'externalCode'
+                    },
+                    {
+                        $Type             : 'Common.ValueListParameterInOut',
+                        LocalDataProperty : 'company_startDate',
+                        ValueListProperty : 'startDate'
+                    },
+                    {
+                        $Type             : 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty : 'name_defaultValue'
+                    },
+                    {
+                        $Type             : 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty : 'description_localized'
+                    }
+                ],
+                Label          : 'Empresas'
+            }
+        },
+        title  : 'Empresa'
+    );
+    budget     @Measures.ISOCurrency : currency_code
+               @Common               : {Label : 'Budget actual'};
+    budgetCap  @Measures.ISOCurrency : currency_code
+               @Common               : {Label : 'Budget Max'};
+    budgetPer  @Measures.Unit        : '%'
+               @Common               : {Label : 'Budget %'};
 }
 
 annotate service.Requests @(Capabilities : {
@@ -269,19 +309,19 @@ annotate service.Status with {
     ID   @Common : {
         Text            : name,
         TextArrangement : #TextOnly
-    }    @title :  'ID de status';
+    }  @title : 'ID de status';
     name @title  : 'Status'
 }
 
 annotate service.Status with @(UI : {
-    CreateHidden    : true,
-    UpdateHidden    : true,
-    DeleteHidden    : true,
-    Identification  : [{
+    CreateHidden        : true,
+    UpdateHidden        : true,
+    DeleteHidden        : true,
+    Identification      : [{
         $Type : 'UI.DataField',
         Value : name
     }],
-    HeaderInfo      : {
+    HeaderInfo          : {
         $Type          : 'UI.HeaderInfoType',
         TypeName       : 'Status',
         TypeNamePlural : 'Status',
@@ -294,11 +334,11 @@ annotate service.Status with @(UI : {
             Value : descr
         }
     },
-    SelectionFields : [
+    SelectionFields     : [
         name,
         descr
     ],
-    LineItem        : [
+    LineItem            : [
         {
             $Type : 'UI.DataField',
             Value : ID
@@ -359,10 +399,10 @@ annotate service.Status @(Capabilities : {
 
 //////////////// Positions
 annotate service.Positions with {
-    code   @Common : {
+    code          @Common : {
         Text            : positionTitle,
         TextArrangement : #TextOnly
-    }    @title :  'Posição';
+    }  @title : 'Posição';
     // effectiveStartDate   @Common : {
     //     Text            : positionTitle,
     //     TextArrangement : #TextOnly
@@ -371,14 +411,14 @@ annotate service.Positions with {
 }
 
 annotate service.Positions with @(UI : {
-    CreateHidden    : true,
-    UpdateHidden    : true,
-    DeleteHidden    : true,
-    Identification  : [{
+    CreateHidden        : true,
+    UpdateHidden        : true,
+    DeleteHidden        : true,
+    Identification      : [{
         $Type : 'UI.DataField',
         Value : positionTitle
     }],
-    HeaderInfo      : {
+    HeaderInfo          : {
         $Type          : 'UI.HeaderInfoType',
         TypeName       : 'Posição',
         TypeNamePlural : 'Posições',
@@ -391,11 +431,11 @@ annotate service.Positions with @(UI : {
             Value : externalName_defaultValue
         }
     },
-    SelectionFields : [
+    SelectionFields     : [
         positionTitle,
         externalName_defaultValue
     ],
-    LineItem        : [
+    LineItem            : [
         {
             $Type : 'UI.DataField',
             Value : code
@@ -454,6 +494,21 @@ annotate service.Positions with @(UI : {
 });
 
 annotate service.Positions @(Capabilities : {
+    Insertable : false,
+    Deletable  : false,
+    Updatable  : false
+});
+
+//////////////// Companies
+annotate service.Companies with {
+    externalCode      @Common : {
+        Text            : name_defaultValue,
+        TextArrangement : #TextOnly
+    }  @title : 'Posição';
+    name_defaultValue @title  : 'Empresa'
+}
+
+annotate service.Companies @(Capabilities : {
     Insertable : false,
     Deletable  : false,
     Updatable  : false

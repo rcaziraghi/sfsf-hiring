@@ -22,16 +22,14 @@ service CatalogService @(path:'/hiring', requires : 'authenticated-user' ) {
     },
    Common.SideEffects.TargetProperties : ['in/status_ID'], ) };
 
-
   entity Status as projection on my.Status;
   annotate Status with @(requires: 'Admin');
 
-  entity Positions as 
-    select from my.Positions {
-    * 
-    // , SF_Position.externalName_defaultValue as Position_name
-  };
+  entity Positions as projection on my.Positions;
   annotate Positions with @(requires: 'Admin');
+
+  entity Companies as projection on my.Companies;
+  annotate Companies with @(requires: 'Admin');
 
   @readonly
   entity SF_PositionMatrixRelationships as projection on my.SF_PositionMatrixRelationships;
@@ -44,5 +42,9 @@ service CatalogService @(path:'/hiring', requires : 'authenticated-user' ) {
   @readonly
   entity SF_CostCenters as projection on my.SF_CostCenters;
   annotate SF_CostCenters with @(requires: 'Admin');
+
+  @readonly
+  entity SF_Companies as projection on my.SF_Companies;
+  annotate SF_Companies with @(requires: 'Admin');
 
 }
