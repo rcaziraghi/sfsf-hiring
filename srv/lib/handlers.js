@@ -1,5 +1,6 @@
 const cds = require('@sap/cds');
 const namespace = 'deloitte.hiring.db.';
+const namespaceCatalogService = 'deloitte.hiring.service.catalogservice.';
 
 let FoundationService = null;
 let PositionService = null;
@@ -35,36 +36,78 @@ function removeColumnsFromOrderBy(query, columnNames) {
 }
 
 /*** HANDLERS ***/
-// Read SF Positions
-async function readSF_Positions(req) {
-    try {
-        // Columns that are not sortable must be removed from "order by"
-        req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
+// // Read SF Positions
+// async function readSF_Positions(req) {
+//     try {
+//         // Columns that are not sortable must be removed from "order by"
+//         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
 
-        // Handover to the SF OData Service to fecth the requested data
-        const tx = PositionService.tx(req);
-        return await tx.run(req.query);
-    } catch (err) {
-        req.error(err.code, err.message);
-    }
-}
+//         // Handover to the SF OData Service to fecth the requested data
+//         const tx = PositionService.tx(req);
+//         return await tx.run(req.query);
+//     } catch (err) {
+//         req.error(err.code, err.message);
+//     }
+// }
 
-// Read SF Positions
-async function readSF_PositionMatrixRelationships(req) {
-    try {
-        // Columns that are not sortable must be removed from "order by"
-        req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
+// // Read SF Positions
+// async function readSF_PositionMatrixRelationships(req) {
+//     try {
+//         // Columns that are not sortable must be removed from "order by"
+//         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
 
-        // Handover to the SF OData Service to fecth the requested data
-        const tx = PositionService.tx(req);
-        return await tx.run(req.query);
-    } catch (err) {
-        req.error(err.code, err.message);
-    }
-}
+//         // Handover to the SF OData Service to fecth the requested data
+//         const tx = PositionService.tx(req);
+//         return await tx.run(req.query);
+//     } catch (err) {
+//         req.error(err.code, err.message);
+//     }
+// }
 
-// Read SF Cost Centers
-async function readSF_CostCenters(req) {
+// // Read SF Cost Centers
+// async function readSF_CostCenters(req) {
+//     try {
+//         // Columns that are not sortable must be removed from "order by"
+//         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
+
+//         // Handover to the SF OData Service to fecth the requested data
+//         const tx = FoundationService.tx(req);
+//         return await tx.run(req.query);
+//     } catch (err) {
+//         req.error(err.code, err.message);
+//     }
+// }
+
+// // Read SF Companies
+// async function readSF_Companies(req) {
+//     try {
+//         // Columns that are not sortable must be removed from "order by"
+//         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
+
+//         // Handover to the SF OData Service to fecth the requested data
+//         const tx = FoundationService.tx(req);
+//         return await tx.run(req.query);
+//     } catch (err) {
+//         req.error(err.code, err.message);
+//     }
+// }
+
+// // Read SF JobCodes
+// async function readSF_JobCodes(req) {
+//     try {
+//         // Columns that are not sortable must be removed from "order by"
+//         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
+
+//         // Handover to the SF OData Service to fecth the requested data
+//         const tx = FoundationService.tx(req);
+//         return await tx.run(req.query);
+//     } catch (err) {
+//         req.error(err.code, err.message);
+//     }
+// }
+
+// Read SF entities
+async function readSF_Entities(req) {
     try {
         // Columns that are not sortable must be removed from "order by"
         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
@@ -73,24 +116,9 @@ async function readSF_CostCenters(req) {
         const tx = FoundationService.tx(req);
         return await tx.run(req.query);
     } catch (err) {
-        req.error(err.code, err.message);
+        //req.error(err.code, err.message);
     }
 }
-
-// Read SF Companies
-async function readSF_Companies(req) {
-    try {
-        // Columns that are not sortable must be removed from "order by"
-        req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
-
-        // Handover to the SF OData Service to fecth the requested data
-        const tx = FoundationService.tx(req);
-        return await tx.run(req.query);
-    } catch (err) {
-        req.error(err.code, err.message);
-    }
-}
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///Requests
@@ -142,21 +170,21 @@ async function beforeSaveRequests(req) {
             }
         }
 
-        if (req.data.company_externalCode) {
-            let company = await cds.tx(req).run(SELECT.one.from(namespace + 'Companies').columns(['externalCode', 'startDate']).where({
-                externalCode: {
-                    '=': req.data.company_externalCode
-                },
-                startDate: {
-                    '=': req.data.company_startDate
-                }
-            }));
-            if (!company) {
-                await executeCreateCompany(req, req.data.company_externalCode, req.data.company_startDate)
-            } else {
-                await executeUpdateCompany(req, req.data.company_externalCode, req.data.company_startDate)
-            }
-        }
+        // if (req.data.company_externalCode) {
+        //     let company = await cds.tx(req).run(SELECT.one.from(namespace + 'Companies').columns(['externalCode', 'startDate']).where({
+        //         externalCode: {
+        //             '=': req.data.company_externalCode
+        //         },
+        //         startDate: {
+        //             '=': req.data.company_startDate
+        //         }
+        //     }));
+        //     if (!company) {
+        //         await executeCreateCompany(req, req.data.company_externalCode, req.data.company_startDate)
+        //     } else {
+        //         await executeUpdateCompany(req, req.data.company_externalCode, req.data.company_startDate)
+        //     }
+        // }
 
         return req;
     } catch (err) {
@@ -168,7 +196,7 @@ async function beforeSaveRequests(req) {
 async function beforeCreateRequests(req) {
     try {
         if (!req.data.status_ID) {
-            req.data.status_ID = 2;
+            req.data.status_ID = 1;
         }
         return req;
     } catch (err) {
@@ -185,11 +213,217 @@ async function afterReadRequests(Requests, req) {
         } else {
             Requests = await updateBudgetInfo(Requests, req);
         }
-        console.log(Requests);
+        //console.log(Requests);
         return Requests;
     } catch (err) {
         req.error(err.code, err.message);
     }
+}
+
+async function afterPatchRequests(Requests, req) {
+    console.log("afterPatchRequests")
+    try {
+        if (Array.isArray(Requests)) {
+            return Promise.all(Requests.map(async Request => {
+                Request = await updateOrganizational(Request, req);
+            }))
+        } else {
+            Requests = await updateOrganizational(Requests, req);
+        }
+        //console.log(Requests);
+        return Requests;
+    } catch (err) {
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+    }
+}
+
+async function updateOrganizational(Request, req) {
+
+    let updated = false;
+
+    let RequestDraftOrganizational = await cds.tx(req).run(SELECT.one.from(namespaceCatalogService + 'Requests_drafts')
+        .where({
+            ID: {
+                '=': Request.ID
+            }
+        }));
+
+    if (RequestDraftOrganizational.POSITION_CODE && RequestDraftOrganizational.POSITION_EFFECTIVESTARTDATE) {
+
+        let templatesfPosition = await PositionService.tx(req).run(SELECT.one.from('Position')
+            .columns(['code', 'effectiveStartDate', 'positionTitle', 'jobTitle', 'jobCode', 'company', 'businessUnit', 'department', 'costCenter', 'division', 'effectiveStatus', 'externalName_defaultValue', 'externalName_en_US'])
+            .where({
+                code: {
+                    '=': RequestDraftOrganizational.POSITION_CODE
+                },
+                effectiveStartDate: {
+                    '=': RequestDraftOrganizational.POSITION_EFFECTIVESTARTDATE
+                }
+            }));
+
+        if (templatesfPosition) {
+
+            //console.log(templatesfPosition);
+
+            if (!RequestDraftOrganizational.TITLE) {
+
+                RequestDraftOrganizational.TITLE = templatesfPosition.positionTitle;
+                updated = true;
+
+            }
+
+            if (!RequestDraftOrganizational.COSTCENTER_EXTERNALCODE) {
+
+                const sfCostCenter = await FoundationService.tx(req).run(SELECT.one.from('FOCostCenter')
+                    .columns(['externalCode', 'startDate'])
+                    .where({
+                        externalCode: {
+                            '=': templatesfPosition.costCenter
+                        },
+                        status: {
+                            '=': 'A'
+                        }
+                    }));
+
+                if (sfCostCenter) {
+                    RequestDraftOrganizational.COSTCENTER_EXTERNALCODE = sfCostCenter.externalCode;
+                    RequestDraftOrganizational.COSTCENTER_STARTDATE = sfCostCenter.startDate
+                    updated = true;
+                    await executeUpdateCostCenter(req, sfCostCenter.externalCode, sfCostCenter.startDate)
+
+                }
+
+            }
+
+            if (!RequestDraftOrganizational.COMPANY_EXTERNALCODE) {
+
+                const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
+                    .columns(['externalCode', 'startDate'])
+                    .where({
+                        externalCode: {
+                            '=': templatesfPosition.company
+                        },
+                        status: {
+                            '=': 'A'
+                        }
+                    }));
+
+                if (sfCompany) {
+
+                    RequestDraftOrganizational.COMPANY_EXTERNALCODE = sfCompany.externalCode;
+                    RequestDraftOrganizational.COMPANY_STARTDATE = sfCompany.startDate;
+                    updated = true;
+
+                }
+
+            }
+
+            if (!RequestDraftOrganizational.DIVISION_EXTERNALCODE) {
+
+                const sfDivision = await FoundationService.tx(req).run(SELECT.one.from('FODivision')
+                    .columns(['externalCode', 'startDate'])
+                    .where({
+                        externalCode: {
+                            '=': templatesfPosition.division
+                        },
+                        status: {
+                            '=': 'A'
+                        }
+                    }));
+
+                if (sfDivision) {
+
+                    RequestDraftOrganizational.DIVISION_EXTERNALCODE = sfDivision.externalCode;
+                    RequestDraftOrganizational.DIVISION_STARTDATE = sfDivision.startDate;
+                    updated = true;
+
+                }
+
+            }
+
+            if (!RequestDraftOrganizational.BUSINESSUNIT_EXTERNALCODE) {
+
+                const sfBusinessUnit = await FoundationService.tx(req).run(SELECT.one.from('FOBusinessUnit')
+                    .columns(['externalCode', 'startDate'])
+                    .where({
+                        externalCode: {
+                            '=': templatesfPosition.businessUnit
+                        },
+                        status: {
+                            '=': 'A'
+                        }
+                    }));
+
+                if (sfBusinessUnit) {
+
+                    RequestDraftOrganizational.BUSINESSUNIT_EXTERNALCODE = sfBusinessUnit.externalCode;
+                    RequestDraftOrganizational.BUSINESSUNIT_STARTDATE = sfBusinessUnit.startDate;
+                    updated = true;
+
+                }
+
+            }
+
+            if (!RequestDraftOrganizational.DEPARTMENT_EXTERNALCODE) {
+
+                const sfDepartment = await FoundationService.tx(req).run(SELECT.one.from('FODepartment')
+                    .columns(['externalCode', 'startDate'])
+                    .where({
+                        externalCode: {
+                            '=': templatesfPosition.department
+                        },
+                        status: {
+                            '=': 'A'
+                        }
+                    }));
+
+                if (sfDepartment) {
+
+                    RequestDraftOrganizational.DEPARTMENT_EXTERNALCODE = sfDepartment.externalCode;
+                    RequestDraftOrganizational.DEPARTMENT_STARTDATE = sfDepartment.startDate;
+                    updated = true;
+
+                }
+
+            }
+
+            if (!RequestDraftOrganizational.JOBCODE_EXTERNALCODE) {
+
+                const sfJobCode = await FoundationService.tx(req).run(SELECT.one.from('FOJobCode')
+                    .columns(['externalCode', 'startDate'])
+                    .where({
+                        externalCode: {
+                            '=': templatesfPosition.jobCode
+                        },
+                        status: {
+                            '=': 'A'
+                        }
+                    }));
+
+                if (sfJobCode) {
+
+                    RequestDraftOrganizational.JOBCODE_EXTERNALCODE = sfJobCode.externalCode;
+                    RequestDraftOrganizational.JOBCODE_STARTDATE = sfJobCode.startDate;
+                    updated = true;
+
+                }
+
+            }
+
+            // console.log('RequestDraftOrganizational')
+            // console.log(RequestDraftOrganizational)
+
+            if (updated) {
+                await cds.tx(req).run(UPDATE.entity(namespaceCatalogService + 'Requests_drafts').data(RequestDraftOrganizational));
+            }
+
+        }
+
+    }
+
+    return Request;
 }
 
 async function updateBudgetInfo(Request, req) {
@@ -198,8 +432,8 @@ async function updateBudgetInfo(Request, req) {
             '=': Request.ID
         }
     }));
-    if (RequestBudget.budget && RequestBudget.budgetCap && RequestBudget.budgetCap > 0 && RequestBudget.budget > 0) {
-        Request.budgetPer = Math.abs((RequestBudget.budget / RequestBudget.budgetCap) * 100);
+    if (RequestBudget && RequestBudget.budget && RequestBudget.budgetCap && RequestBudget.budgetCap > 0 && RequestBudget.budget > 0) {
+        Request.budgetPer = Math.abs((RequestBudget.budget / RequestBudget.budgetCap) * 100).toFixed(2);
         Request.budgetCriticality = Request.budgetPer >= 0 && Request.budgetPer <= 50 ? 5 : Request.budgetPer >= 51 && Request.budgetPer <= 70 ? 3 : Request.budgetPer >= 71 && Request.budgetPer <= 99 ? 2 : Request.budgetPer >= 100 ? 1 : 0;
     } else {
         Request.budgetPer = 0.00;
@@ -377,203 +611,206 @@ async function beforeDeleteCostCenters(req) {
 ////////////////////////////////////////////////////////////////////////////
 ///Companies
 //Create Company
-async function executeCreateCompany(req, externalCode, startDate) {
-    try {
-        console.log('executeCreateCompany');
-        const Company = await cds.tx(req).run(SELECT.one.from(namespace + 'Companies').columns(['externalCode', 'startDate'])
-            .where({
-                externalCode: {
-                    '=': externalCode
-                },
-                startDate: {
-                    '=': startDate
-                }
-            }));
-        if (!Company) {
-            const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
-                .columns([
-                    'externalCode',
-                    "startDate",
-                    "createdBy",
-                    "createdDateTime",
-                    "createdOn",
-                    "currency",
-                    "defaultLocation",
-                    "defaultPayGroup",
-                    "description",
-                    "description_de_DE",
-                    "description_defaultValue",
-                    "description_en_GB",
-                    "description_en_US",
-                    "description_es_ES",
-                    "description_fr_FR",
-                    "description_ja_JP",
-                    "description_ko_KR",
-                    "description_localized",
-                    "description_nl_NL",
-                    "description_pt_BR",
-                    "description_pt_PT",
-                    "description_ru_RU",
-                    "description_zh_CN",
-                    "description_zh_TW",
-                    "endDate",
-                    "lastModifiedBy",
-                    "lastModifiedDateTime",
-                    "lastModifiedOn",
-                    "name",
-                    "name_de_DE",
-                    "name_defaultValue",
-                    "name_en_GB",
-                    "name_en_US",
-                    "name_es_ES",
-                    "name_fr_FR",
-                    "name_ja_JP",
-                    "name_ko_KR",
-                    "name_localized",
-                    "name_nl_NL",
-                    "name_pt_BR",
-                    "name_pt_PT",
-                    "name_ru_RU",
-                    "name_zh_CN",
-                    "name_zh_TW",
-                    "standardHours",
-                    "status"
-                ])
-                .where({
-                    externalCode: {
-                        '=': externalCode
-                    },
-                    startDate: {
-                        '=': startDate
-                    }
-                }));
-            if (sfCompany) {
-                await cds.tx(req).run(INSERT.into(namespace + 'Companies').entries(sfCompany));
-            }
-        }
-    } catch (err) {
-        console.log(err)
-        console.log(err.code, err.message);
-        req.error(err.code, err.message);
-        console.log('erro create company')
-    }
-}
+// async function executeCreateCompany(req, externalCode, startDate) {
+//     try {
+//         console.log('executeCreateCompany');
+//         const Company = await cds.tx(req).run(SELECT.one.from(namespace + 'Companies').columns(['externalCode', 'startDate'])
+//             .where({
+//                 externalCode: {
+//                     '=': externalCode
+//                 },
+//                 startDate: {
+//                     '=': startDate
+//                 }
+//             }));
+//         if (!Company) {
+//             const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
+//                 .columns([
+//                     'externalCode',
+//                     "startDate",
+//                     "createdBy",
+//                     "createdDateTime",
+//                     "createdOn",
+//                     "currency",
+//                     "defaultLocation",
+//                     "defaultPayGroup",
+//                     "description",
+//                     "description_de_DE",
+//                     "description_defaultValue",
+//                     "description_en_GB",
+//                     "description_en_US",
+//                     "description_es_ES",
+//                     "description_fr_FR",
+//                     "description_ja_JP",
+//                     "description_ko_KR",
+//                     "description_localized",
+//                     "description_nl_NL",
+//                     "description_pt_BR",
+//                     "description_pt_PT",
+//                     "description_ru_RU",
+//                     "description_zh_CN",
+//                     "description_zh_TW",
+//                     "endDate",
+//                     "lastModifiedBy",
+//                     "lastModifiedDateTime",
+//                     "lastModifiedOn",
+//                     "name",
+//                     "name_de_DE",
+//                     "name_defaultValue",
+//                     "name_en_GB",
+//                     "name_en_US",
+//                     "name_es_ES",
+//                     "name_fr_FR",
+//                     "name_ja_JP",
+//                     "name_ko_KR",
+//                     "name_localized",
+//                     "name_nl_NL",
+//                     "name_pt_BR",
+//                     "name_pt_PT",
+//                     "name_ru_RU",
+//                     "name_zh_CN",
+//                     "name_zh_TW",
+//                     "standardHours",
+//                     "status"
+//                 ])
+//                 .where({
+//                     externalCode: {
+//                         '=': externalCode
+//                     },
+//                     startDate: {
+//                         '=': startDate
+//                     }
+//                 }));
+//             if (sfCompany) {
+//                 await cds.tx(req).run(INSERT.into(namespace + 'Companies').entries(sfCompany));
+//             }
+//         }
+//     } catch (err) {
+//         console.log(err)
+//         console.log(err.code, err.message);
+//         req.error(err.code, err.message);
+//         console.log('erro create company')
+//     }
+// }
 
-//Update Companies
-async function executeUpdateCompany(req, externalCode, startDate) {
-    try {
-        console.log('executeUpdateCompany');
-        const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
-            .columns([
-                'externalCode',
-                "startDate",
-                "createdBy",
-                "createdDateTime",
-                "createdOn",
-                "currency",
-                "defaultLocation",
-                "defaultPayGroup",
-                "description",
-                "description_de_DE",
-                "description_defaultValue",
-                "description_en_GB",
-                "description_en_US",
-                "description_es_ES",
-                "description_fr_FR",
-                "description_ja_JP",
-                "description_ko_KR",
-                "description_localized",
-                "description_nl_NL",
-                "description_pt_BR",
-                "description_pt_PT",
-                "description_ru_RU",
-                "description_zh_CN",
-                "description_zh_TW",
-                "endDate",
-                "lastModifiedBy",
-                "lastModifiedDateTime",
-                "lastModifiedOn",
-                "name",
-                "name_de_DE",
-                "name_defaultValue",
-                "name_en_GB",
-                "name_en_US",
-                "name_es_ES",
-                "name_fr_FR",
-                "name_ja_JP",
-                "name_ko_KR",
-                "name_localized",
-                "name_nl_NL",
-                "name_pt_BR",
-                "name_pt_PT",
-                "name_ru_RU",
-                "name_zh_CN",
-                "name_zh_TW",
-                "standardHours",
-                "status"
-            ])
-            .where({
-                externalCode: {
-                    '=': externalCode
-                },
-                startDate: {
-                    '=': startDate
-                }
-            }));
-        if (sfCompany) {
-            await cds.tx(req).run(UPDATE.entity(namespace + 'Companies').data(sfCompany));
-        }
-    } catch (error) {
-        console.log(err.code);
-        console.log(err.message);
-        req.error(err.code, err.message);
-        console.log('erro execute update company');
-    }
-}
+// //Update Companies
+// async function executeUpdateCompany(req, externalCode, startDate) {
+//     try {
+//         console.log('executeUpdateCompany');
+//         const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
+//             .columns([
+//                 'externalCode',
+//                 "startDate",
+//                 "createdBy",
+//                 "createdDateTime",
+//                 "createdOn",
+//                 "currency",
+//                 "defaultLocation",
+//                 "defaultPayGroup",
+//                 "description",
+//                 "description_de_DE",
+//                 "description_defaultValue",
+//                 "description_en_GB",
+//                 "description_en_US",
+//                 "description_es_ES",
+//                 "description_fr_FR",
+//                 "description_ja_JP",
+//                 "description_ko_KR",
+//                 "description_localized",
+//                 "description_nl_NL",
+//                 "description_pt_BR",
+//                 "description_pt_PT",
+//                 "description_ru_RU",
+//                 "description_zh_CN",
+//                 "description_zh_TW",
+//                 "endDate",
+//                 "lastModifiedBy",
+//                 "lastModifiedDateTime",
+//                 "lastModifiedOn",
+//                 "name",
+//                 "name_de_DE",
+//                 "name_defaultValue",
+//                 "name_en_GB",
+//                 "name_en_US",
+//                 "name_es_ES",
+//                 "name_fr_FR",
+//                 "name_ja_JP",
+//                 "name_ko_KR",
+//                 "name_localized",
+//                 "name_nl_NL",
+//                 "name_pt_BR",
+//                 "name_pt_PT",
+//                 "name_ru_RU",
+//                 "name_zh_CN",
+//                 "name_zh_TW",
+//                 "standardHours",
+//                 "status"
+//             ])
+//             .where({
+//                 externalCode: {
+//                     '=': externalCode
+//                 },
+//                 startDate: {
+//                     '=': startDate
+//                 }
+//             }));
+//         if (sfCompany) {
+//             await cds.tx(req).run(UPDATE.entity(namespace + 'Companies').data(sfCompany));
+//         }
+//     } catch (error) {
+//         console.log(err.code);
+//         console.log(err.message);
+//         req.error(err.code, err.message);
+//         console.log('erro execute update company');
+//     }
+// }
 
-async function beforeCreateCompanies(req) {
-    try {
-        // Add SF Company to Companies entity if it does not exist yet
-        const item = req.data;
-        const externalCode = (item.company_externalCode) ? item.company_externalCode : null;
-        const startDate = (item.company_startDate) ? item.company_startDate : null;
-        if (externalCode && startDate) {
-            await executeCreateCompany(req, externalCode, startDate);
-        }
-        return req;
-    } catch (err) {
-        console.log(err.code);
-        console.log(err.message);
-        req.error(err.code, err.message);
-        console.log('erro before create company');
-    }
-}
+// async function beforeCreateCompanies(req) {
+//     try {
+//         // Add SF Company to Companies entity if it does not exist yet
+//         const item = req.data;
+//         const externalCode = (item.company_externalCode) ? item.company_externalCode : null;
+//         const startDate = (item.company_startDate) ? item.company_startDate : null;
+//         if (externalCode && startDate) {
+//             await executeCreateCompany(req, externalCode, startDate);
+//         }
+//         return req;
+//     } catch (err) {
+//         console.log(err.code);
+//         console.log(err.message);
+//         req.error(err.code, err.message);
+//         console.log('erro before create company');
+//     }
+// }
 
-async function beforeUpdateCompanies(req) {
+// async function beforeUpdateCompanies(req) {
 
-}
+// }
 
-async function beforeDeleteCompanies(req) {
+// async function beforeDeleteCompanies(req) {
 
-}
+// }
 
 module.exports = {
-    readSF_Positions,
-    readSF_CostCenters,
-    readSF_PositionMatrixRelationships,
-    readSF_Companies,
+    // readSF_Positions,
+    // readSF_CostCenters,
+    // readSF_PositionMatrixRelationships,
+    // readSF_Companies,
+    // readSF_JobCodes,
+    readSF_Entities,
     onSendRequestForApproval,
     beforeSaveRequests,
     beforeCreateRequests,
     afterSaveRequests,
     afterReadRequests,
+    afterPatchRequests,
     beforeCreatePositions,
     beforeUpdatePositions,
     beforeDeletePositions,
     beforeCreateCostCenters,
     beforeUpdateCostCenters,
     beforeDeleteCostCenters,
-    beforeCreateCompanies,
-    beforeUpdateCompanies,
-    beforeDeleteCompanies,
+    // beforeCreateCompanies,
+    // beforeUpdateCompanies,
+    // beforeDeleteCompanies,
 }

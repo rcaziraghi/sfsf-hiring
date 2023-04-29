@@ -68,9 +68,9 @@
                                 "Admin"
                             ]
                         },
-                        "user": {
+                        "requester": {
                             "roles": [
-                                "User"
+                                "Requester"
                             ]
                         }
                     }

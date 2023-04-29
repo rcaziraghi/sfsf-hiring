@@ -8,6 +8,10 @@
       "description": "UAA"
     },
     {
+      "name": "$XSAPPNAME.Requester",
+      "description": "Requester"
+    },
+    {
       "name": "$XSAPPNAME.Admin",
       "description": "Admin"
     }
@@ -22,6 +26,14 @@
       ]
     },
     {
+      "name": "Requester",
+      "description": "Solicitante",
+      "scope-references": [
+        "$XSAPPNAME.Requester"
+      ],
+      "attribute-references": []
+    }
+    {
       "name": "Admin",
       "description": "Administrador",
       "scope-references": [
@@ -31,6 +43,13 @@
     }
   ],
   "role-collections": [
+    {
+      "name": "sfsf-hiring-requester",
+      "description": "Solicitante",
+      "role-template-references": [
+        "$XSAPPNAME.requester"
+      ]
+    },
     {
       "name": "sfsf-hiring-admin",
       "description": "Admin",
