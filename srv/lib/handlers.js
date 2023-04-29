@@ -170,21 +170,69 @@ async function beforeSaveRequests(req) {
             }
         }
 
-        // if (req.data.company_externalCode) {
-        //     let company = await cds.tx(req).run(SELECT.one.from(namespace + 'Companies').columns(['externalCode', 'startDate']).where({
-        //         externalCode: {
-        //             '=': req.data.company_externalCode
-        //         },
-        //         startDate: {
-        //             '=': req.data.company_startDate
-        //         }
-        //     }));
-        //     if (!company) {
-        //         await executeCreateCompany(req, req.data.company_externalCode, req.data.company_startDate)
-        //     } else {
-        //         await executeUpdateCompany(req, req.data.company_externalCode, req.data.company_startDate)
-        //     }
-        // }
+        if (req.data.company_externalCode) {
+            let company = await cds.tx(req).run(SELECT.one.from(namespace + 'Companies').columns(['externalCode', 'startDate']).where({
+                externalCode: {
+                    '=': req.data.company_externalCode
+                },
+                startDate: {
+                    '=': req.data.company_startDate
+                }
+            }));
+            if (!company) {
+                await executeCreateCompany(req, req.data.company_externalCode, req.data.company_startDate)
+            } else {
+                await executeUpdateCompany(req, req.data.company_externalCode, req.data.company_startDate)
+            }
+        }
+
+        if (req.data.division_externalCode) {
+            let division = await cds.tx(req).run(SELECT.one.from(namespace + 'Divisions').columns(['externalCode', 'startDate']).where({
+                externalCode: {
+                    '=': req.data.division_externalCode
+                },
+                startDate: {
+                    '=': req.data.division_startDate
+                }
+            }));
+            if (!division) {
+                await executeCreateDivision(req, req.data.division_externalCode, req.data.division_startDate)
+            } else {
+                await executeUpdateDivision(req, req.data.division_externalCode, req.data.division_startDate)
+            }
+        }
+
+        if (req.data.department_externalCode) {
+            let department = await cds.tx(req).run(SELECT.one.from(namespace + 'Departments').columns(['externalCode', 'startDate']).where({
+                externalCode: {
+                    '=': req.data.department_externalCode
+                },
+                startDate: {
+                    '=': req.data.department_startDate
+                }
+            }));
+            if (!department) {
+                await executeCreateDepartment(req, req.data.department_externalCode, req.data.department_startDate)
+            } else {
+                await executeUpdateDepartment(req, req.data.department_externalCode, req.data.department_startDate)
+            }
+        }
+
+        if (req.data.businessUnit_externalCode) {
+            let businessUnit = await cds.tx(req).run(SELECT.one.from(namespace + 'BusinessUnits').columns(['externalCode', 'startDate']).where({
+                externalCode: {
+                    '=': req.data.businessUnit_externalCode
+                },
+                startDate: {
+                    '=': req.data.businessUnit_startDate
+                }
+            }));
+            if (!businessUnit) {
+                await executeCreateBusinessUnit(req, req.data.businessUnit_externalCode, req.data.businessUnit_startDate)
+            } else {
+                await executeUpdateBusinessUnit(req, req.data.businessUnit_externalCode, req.data.businessUnit_startDate)
+            }
+        }
 
         return req;
     } catch (err) {
@@ -220,8 +268,9 @@ async function afterReadRequests(Requests, req) {
     }
 }
 
+//Update the organizational units based on template
 async function afterPatchRequests(Requests, req) {
-    console.log("afterPatchRequests")
+    //console.log("afterPatchRequests")
     try {
         if (Array.isArray(Requests)) {
             return Promise.all(Requests.map(async Request => {
@@ -233,9 +282,9 @@ async function afterPatchRequests(Requests, req) {
         //console.log(Requests);
         return Requests;
     } catch (err) {
-        //req.error(err.code, err.message);
-        console.log(err.code);
-        console.log(err.message);
+        req.error(err.code, err.message);
+        //console.log(err.code);
+        //console.log(err.message);
     }
 }
 
@@ -412,9 +461,6 @@ async function updateOrganizational(Request, req) {
 
             }
 
-            // console.log('RequestDraftOrganizational')
-            // console.log(RequestDraftOrganizational)
-
             if (updated) {
                 await cds.tx(req).run(UPDATE.entity(namespaceCatalogService + 'Requests_drafts').data(RequestDraftOrganizational));
             }
@@ -483,8 +529,8 @@ async function executeCreatePosition(req, code, effectiveStartDate) {
             }
         }
     } catch (err) {
-        console.log(err)
-        console.log(err.code, err.message);
+        //console.log(err)
+        //console.log(err.code, err.message);
         req.error(err.code, err.message);
     }
 }
@@ -608,188 +654,732 @@ async function beforeDeleteCostCenters(req) {
 
 }
 
-////////////////////////////////////////////////////////////////////////////
-///Companies
+///////////////////////////////////////////////////////////////////////////
+//Companies
 //Create Company
-// async function executeCreateCompany(req, externalCode, startDate) {
-//     try {
-//         console.log('executeCreateCompany');
-//         const Company = await cds.tx(req).run(SELECT.one.from(namespace + 'Companies').columns(['externalCode', 'startDate'])
-//             .where({
-//                 externalCode: {
-//                     '=': externalCode
-//                 },
-//                 startDate: {
-//                     '=': startDate
-//                 }
-//             }));
-//         if (!Company) {
-//             const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
-//                 .columns([
-//                     'externalCode',
-//                     "startDate",
-//                     "createdBy",
-//                     "createdDateTime",
-//                     "createdOn",
-//                     "currency",
-//                     "defaultLocation",
-//                     "defaultPayGroup",
-//                     "description",
-//                     "description_de_DE",
-//                     "description_defaultValue",
-//                     "description_en_GB",
-//                     "description_en_US",
-//                     "description_es_ES",
-//                     "description_fr_FR",
-//                     "description_ja_JP",
-//                     "description_ko_KR",
-//                     "description_localized",
-//                     "description_nl_NL",
-//                     "description_pt_BR",
-//                     "description_pt_PT",
-//                     "description_ru_RU",
-//                     "description_zh_CN",
-//                     "description_zh_TW",
-//                     "endDate",
-//                     "lastModifiedBy",
-//                     "lastModifiedDateTime",
-//                     "lastModifiedOn",
-//                     "name",
-//                     "name_de_DE",
-//                     "name_defaultValue",
-//                     "name_en_GB",
-//                     "name_en_US",
-//                     "name_es_ES",
-//                     "name_fr_FR",
-//                     "name_ja_JP",
-//                     "name_ko_KR",
-//                     "name_localized",
-//                     "name_nl_NL",
-//                     "name_pt_BR",
-//                     "name_pt_PT",
-//                     "name_ru_RU",
-//                     "name_zh_CN",
-//                     "name_zh_TW",
-//                     "standardHours",
-//                     "status"
-//                 ])
-//                 .where({
-//                     externalCode: {
-//                         '=': externalCode
-//                     },
-//                     startDate: {
-//                         '=': startDate
-//                     }
-//                 }));
-//             if (sfCompany) {
-//                 await cds.tx(req).run(INSERT.into(namespace + 'Companies').entries(sfCompany));
-//             }
-//         }
-//     } catch (err) {
-//         console.log(err)
-//         console.log(err.code, err.message);
-//         req.error(err.code, err.message);
-//         console.log('erro create company')
-//     }
-// }
+async function executeCreateCompany(req, externalCode, startDate) {
+    try {
+        console.log('executeCreateCompany');
+        const Company = await cds.tx(req).run(SELECT.one.from(namespace + 'Companies').columns(['externalCode', 'startDate'])
+            .where({
+                externalCode: {
+                    '=': externalCode
+                },
+                startDate: {
+                    '=': startDate
+                }
+            }));
+        if (!Company) {
+            const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
+                .columns([
+                    'externalCode',
+                    "startDate",
+                    "createdBy",
+                    "createdDateTime",
+                    "createdOn",
+                    "currency",
+                    "defaultLocation",
+                    "defaultPayGroup",
+                    "description",
+                    "description_de_DE",
+                    "description_defaultValue",
+                    "description_en_GB",
+                    "description_en_US",
+                    "description_es_ES",
+                    "description_fr_FR",
+                    "description_ja_JP",
+                    "description_ko_KR",
+                    "description_localized",
+                    "description_nl_NL",
+                    "description_pt_BR",
+                    "description_pt_PT",
+                    "description_ru_RU",
+                    "description_zh_CN",
+                    "description_zh_TW",
+                    "endDate",
+                    "lastModifiedBy",
+                    "lastModifiedDateTime",
+                    "lastModifiedOn",
+                    "name",
+                    "name_de_DE",
+                    "name_defaultValue",
+                    "name_en_GB",
+                    "name_en_US",
+                    "name_es_ES",
+                    "name_fr_FR",
+                    "name_ja_JP",
+                    "name_ko_KR",
+                    "name_localized",
+                    "name_nl_NL",
+                    "name_pt_BR",
+                    "name_pt_PT",
+                    "name_ru_RU",
+                    "name_zh_CN",
+                    "name_zh_TW",
+                    "standardHours",
+                    "status"
+                ])
+                .where({
+                    externalCode: {
+                        '=': externalCode
+                    },
+                    startDate: {
+                        '=': startDate
+                    }
+                }));
+            if (sfCompany) {
+                await cds.tx(req).run(INSERT.into(namespace + 'Companies').entries(sfCompany));
+            }
+        }
+    } catch (err) {
+        req.error(err.code, err.message);
+        //console.log(err)
+        //console.log(err.code, err.message);
+        //console.log('erro create company')
+    }
+}
 
-// //Update Companies
-// async function executeUpdateCompany(req, externalCode, startDate) {
-//     try {
-//         console.log('executeUpdateCompany');
-//         const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
-//             .columns([
-//                 'externalCode',
-//                 "startDate",
-//                 "createdBy",
-//                 "createdDateTime",
-//                 "createdOn",
-//                 "currency",
-//                 "defaultLocation",
-//                 "defaultPayGroup",
-//                 "description",
-//                 "description_de_DE",
-//                 "description_defaultValue",
-//                 "description_en_GB",
-//                 "description_en_US",
-//                 "description_es_ES",
-//                 "description_fr_FR",
-//                 "description_ja_JP",
-//                 "description_ko_KR",
-//                 "description_localized",
-//                 "description_nl_NL",
-//                 "description_pt_BR",
-//                 "description_pt_PT",
-//                 "description_ru_RU",
-//                 "description_zh_CN",
-//                 "description_zh_TW",
-//                 "endDate",
-//                 "lastModifiedBy",
-//                 "lastModifiedDateTime",
-//                 "lastModifiedOn",
-//                 "name",
-//                 "name_de_DE",
-//                 "name_defaultValue",
-//                 "name_en_GB",
-//                 "name_en_US",
-//                 "name_es_ES",
-//                 "name_fr_FR",
-//                 "name_ja_JP",
-//                 "name_ko_KR",
-//                 "name_localized",
-//                 "name_nl_NL",
-//                 "name_pt_BR",
-//                 "name_pt_PT",
-//                 "name_ru_RU",
-//                 "name_zh_CN",
-//                 "name_zh_TW",
-//                 "standardHours",
-//                 "status"
-//             ])
-//             .where({
-//                 externalCode: {
-//                     '=': externalCode
-//                 },
-//                 startDate: {
-//                     '=': startDate
-//                 }
-//             }));
-//         if (sfCompany) {
-//             await cds.tx(req).run(UPDATE.entity(namespace + 'Companies').data(sfCompany));
-//         }
-//     } catch (error) {
-//         console.log(err.code);
-//         console.log(err.message);
-//         req.error(err.code, err.message);
-//         console.log('erro execute update company');
-//     }
-// }
+//Update Companies
+async function executeUpdateCompany(req, externalCode, startDate) {
+    try {
+        console.log('executeUpdateCompany');
+        const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
+            .columns([
+                'externalCode',
+                "startDate",
+                "createdBy",
+                "createdDateTime",
+                "createdOn",
+                "currency",
+                "defaultLocation",
+                "defaultPayGroup",
+                "description",
+                "description_de_DE",
+                "description_defaultValue",
+                "description_en_GB",
+                "description_en_US",
+                "description_es_ES",
+                "description_fr_FR",
+                "description_ja_JP",
+                "description_ko_KR",
+                "description_localized",
+                "description_nl_NL",
+                "description_pt_BR",
+                "description_pt_PT",
+                "description_ru_RU",
+                "description_zh_CN",
+                "description_zh_TW",
+                "endDate",
+                "lastModifiedBy",
+                "lastModifiedDateTime",
+                "lastModifiedOn",
+                "name",
+                "name_de_DE",
+                "name_defaultValue",
+                "name_en_GB",
+                "name_en_US",
+                "name_es_ES",
+                "name_fr_FR",
+                "name_ja_JP",
+                "name_ko_KR",
+                "name_localized",
+                "name_nl_NL",
+                "name_pt_BR",
+                "name_pt_PT",
+                "name_ru_RU",
+                "name_zh_CN",
+                "name_zh_TW",
+                "standardHours",
+                "status"
+            ])
+            .where({
+                externalCode: {
+                    '=': externalCode
+                },
+                startDate: {
+                    '=': startDate
+                }
+            }));
+        if (sfCompany) {
+            await cds.tx(req).run(UPDATE.entity(namespace + 'Companies').data(sfCompany));
+        }
+    } catch (error) {
+        //console.log(err.code);
+        //console.log(err.message);
+        req.error(err.code, err.message);
+        //console.log('erro execute update company');
+    }
+}
 
-// async function beforeCreateCompanies(req) {
-//     try {
-//         // Add SF Company to Companies entity if it does not exist yet
-//         const item = req.data;
-//         const externalCode = (item.company_externalCode) ? item.company_externalCode : null;
-//         const startDate = (item.company_startDate) ? item.company_startDate : null;
-//         if (externalCode && startDate) {
-//             await executeCreateCompany(req, externalCode, startDate);
-//         }
-//         return req;
-//     } catch (err) {
-//         console.log(err.code);
-//         console.log(err.message);
-//         req.error(err.code, err.message);
-//         console.log('erro before create company');
-//     }
-// }
+async function beforeCreateCompanies(req) {
+    try {
+        // Add SF Company to Companies entity if it does not exist yet
+        const item = req.data;
+        const externalCode = (item.company_externalCode) ? item.company_externalCode : null;
+        const startDate = (item.company_startDate) ? item.company_startDate : null;
+        if (externalCode && startDate) {
+            await executeCreateCompany(req, externalCode, startDate);
+        }
+        return req;
+    } catch (err) {
+        //console.log(err.code);
+        //console.log(err.message);
+        req.error(err.code, err.message);
+        //console.log('erro before create company');
+    }
+}
 
-// async function beforeUpdateCompanies(req) {
+async function beforeUpdateCompanies(req) {
 
-// }
+}
 
-// async function beforeDeleteCompanies(req) {
+async function beforeDeleteCompanies(req) {
 
-// }
+}
+
+///////////////////////////////////////////////////////////////////////////
+//Divisions
+//Create Division
+async function executeCreateDivision(req, externalCode, startDate) {
+    try {
+        const Division = await cds.tx(req).run(SELECT.one.from(namespace + 'Divisions').columns(['externalCode', 'startDate'])
+            .where({
+                externalCode: {
+                    '=': externalCode
+                },
+                startDate: {
+                    '=': startDate
+                }
+            }));
+        if (!Division) {
+            const sfDivision = await FoundationService.tx(req).run(SELECT.one.from('FODivision')
+                .columns([
+                    'externalCode',
+                    "startDate",
+                    // "createdBy",
+                    // "createdDateTime",
+                    // "createdOn",
+                    // "currency",
+                    // "defaultLocation",
+                    // "defaultPayGroup",
+                    // "description",
+                    // "description_de_DE",
+                    "description_defaultValue",
+                    // "description_en_GB",
+                    // "description_en_US",
+                    // "description_es_ES",
+                    // "description_fr_FR",
+                    // "description_ja_JP",
+                    // "description_ko_KR",
+                    // "description_localized",
+                    // "description_nl_NL",
+                    // "description_pt_BR",
+                    // "description_pt_PT",
+                    // "description_ru_RU",
+                    // "description_zh_CN",
+                    // "description_zh_TW",
+                    // "endDate",
+                    // "lastModifiedBy",
+                    // "lastModifiedDateTime",
+                    // "lastModifiedOn",
+                    // "name",
+                    // "name_de_DE",
+                    "name_defaultValue",
+                    // "name_en_GB",
+                    // "name_en_US",
+                    // "name_es_ES",
+                    // "name_fr_FR",
+                    // "name_ja_JP",
+                    // "name_ko_KR",
+                    // "name_localized",
+                    // "name_nl_NL",
+                    // "name_pt_BR",
+                    // "name_pt_PT",
+                    // "name_ru_RU",
+                    // "name_zh_CN",
+                    // "name_zh_TW",
+                    // "standardHours",
+                    // "status"
+                ])
+                .where({
+                    externalCode: {
+                        '=': externalCode
+                    },
+                    startDate: {
+                        '=': startDate
+                    }
+                }));
+            if (sfDivision) {
+                await cds.tx(req).run(INSERT.into(namespace + 'Divisions').entries(sfDivision));
+            }
+        }
+    } catch (err) {
+        //req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
+        //console.log('erro create Division')
+    }
+}
+
+//Update Divisions
+async function executeUpdateDivision(req, externalCode, startDate) {
+    try {
+        const sfDivision = await FoundationService.tx(req).run(SELECT.one.from('FODivision')
+            .columns([
+                'externalCode',
+                "startDate",
+                // "createdBy",
+                // "createdDateTime",
+                // "createdOn",
+                // "currency",
+                // "defaultLocation",
+                // "defaultPayGroup",
+                // "description",
+                // "description_de_DE",
+                "description_defaultValue",
+                // "description_en_GB",
+                // "description_en_US",
+                // "description_es_ES",
+                // "description_fr_FR",
+                // "description_ja_JP",
+                // "description_ko_KR",
+                // "description_localized",
+                // "description_nl_NL",
+                // "description_pt_BR",
+                // "description_pt_PT",
+                // "description_ru_RU",
+                // "description_zh_CN",
+                // "description_zh_TW",
+                // "endDate",
+                // "lastModifiedBy",
+                // "lastModifiedDateTime",
+                // "lastModifiedOn",
+                // "name",
+                // "name_de_DE",
+                "name_defaultValue",
+                // "name_en_GB",
+                // "name_en_US",
+                // "name_es_ES",
+                // "name_fr_FR",
+                // "name_ja_JP",
+                // "name_ko_KR",
+                // "name_localized",
+                // "name_nl_NL",
+                // "name_pt_BR",
+                // "name_pt_PT",
+                // "name_ru_RU",
+                // "name_zh_CN",
+                // "name_zh_TW",
+                // "standardHours",
+                // "status"
+            ])
+            .where({
+                externalCode: {
+                    '=': externalCode
+                },
+                startDate: {
+                    '=': startDate
+                }
+            }));
+        if (sfDivision) {
+            await cds.tx(req).run(UPDATE.entity(namespace + 'Divisions').data(sfDivision));
+        }
+    } catch (error) {
+        req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+        //console.log('erro execute update Division');
+    }
+}
+
+async function beforeCreateDivisions(req) {
+    try {
+        // Add SF Division to Divisions entity if it does not exist yet
+        const item = req.data;
+        const externalCode = (item.division_externalCode) ? item.division_externalCode : null;
+        const startDate = (item.division_startDate) ? item.division_startDate : null;
+        if (externalCode && startDate) {
+            await executeCreateDivision(req, externalCode, startDate);
+        }
+        return req;
+    } catch (err) {
+        console.log(err.code);
+        console.log(err.message);
+        //req.error(err.code, err.message);
+        //console.log('erro before create Division');
+    }
+}
+
+async function beforeUpdateDivisions(req) {
+
+}
+
+async function beforeDeleteDivisions(req) {
+
+}
+
+///////////////////////////////////////////////////////////////////////////
+//Departments
+//Create department
+async function executeCreateDepartment(req, externalCode, startDate) {
+    try {
+        const department = await cds.tx(req).run(SELECT.one.from(namespace + 'Departments').columns(['externalCode', 'startDate'])
+            .where({
+                externalCode: {
+                    '=': externalCode
+                },
+                startDate: {
+                    '=': startDate
+                }
+            }));
+        if (!department) {
+            const sfdepartment = await FoundationService.tx(req).run(SELECT.one.from('FODepartment')
+                .columns([
+                    'externalCode',
+                    "startDate",
+                    // "createdBy",
+                    // "createdDateTime",
+                    // "createdOn",
+                    // "currency",
+                    // "defaultLocation",
+                    // "defaultPayGroup",
+                    // "description",
+                    // "description_de_DE",
+                    "description_defaultValue",
+                    // "description_en_GB",
+                    // "description_en_US",
+                    // "description_es_ES",
+                    // "description_fr_FR",
+                    // "description_ja_JP",
+                    // "description_ko_KR",
+                    // "description_localized",
+                    // "description_nl_NL",
+                    // "description_pt_BR",
+                    // "description_pt_PT",
+                    // "description_ru_RU",
+                    // "description_zh_CN",
+                    // "description_zh_TW",
+                    // "endDate",
+                    // "lastModifiedBy",
+                    // "lastModifiedDateTime",
+                    // "lastModifiedOn",
+                    // "name",
+                    // "name_de_DE",
+                    "name_defaultValue",
+                    // "name_en_GB",
+                    // "name_en_US",
+                    // "name_es_ES",
+                    // "name_fr_FR",
+                    // "name_ja_JP",
+                    // "name_ko_KR",
+                    // "name_localized",
+                    // "name_nl_NL",
+                    // "name_pt_BR",
+                    // "name_pt_PT",
+                    // "name_ru_RU",
+                    // "name_zh_CN",
+                    // "name_zh_TW",
+                    // "standardHours",
+                    // "status"
+                ])
+                .where({
+                    externalCode: {
+                        '=': externalCode
+                    },
+                    startDate: {
+                        '=': startDate
+                    }
+                }));
+            if (sfdepartment) {
+                await cds.tx(req).run(INSERT.into(namespace + 'Departments').entries(sfdepartment));
+            }
+        }
+    } catch (err) {
+        //req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
+        //console.log('erro create department')
+    }
+}
+
+//Update Departments
+async function executeUpdatedepartment(req, externalCode, startDate) {
+    try {
+        const sfdepartment = await FoundationService.tx(req).run(SELECT.one.from('FOdepartment')
+            .columns([
+                'externalCode',
+                "startDate",
+                // "createdBy",
+                // "createdDateTime",
+                // "createdOn",
+                // "currency",
+                // "defaultLocation",
+                // "defaultPayGroup",
+                // "description",
+                // "description_de_DE",
+                "description_defaultValue",
+                // "description_en_GB",
+                // "description_en_US",
+                // "description_es_ES",
+                // "description_fr_FR",
+                // "description_ja_JP",
+                // "description_ko_KR",
+                // "description_localized",
+                // "description_nl_NL",
+                // "description_pt_BR",
+                // "description_pt_PT",
+                // "description_ru_RU",
+                // "description_zh_CN",
+                // "description_zh_TW",
+                // "endDate",
+                // "lastModifiedBy",
+                // "lastModifiedDateTime",
+                // "lastModifiedOn",
+                // "name",
+                // "name_de_DE",
+                "name_defaultValue",
+                // "name_en_GB",
+                // "name_en_US",
+                // "name_es_ES",
+                // "name_fr_FR",
+                // "name_ja_JP",
+                // "name_ko_KR",
+                // "name_localized",
+                // "name_nl_NL",
+                // "name_pt_BR",
+                // "name_pt_PT",
+                // "name_ru_RU",
+                // "name_zh_CN",
+                // "name_zh_TW",
+                // "standardHours",
+                // "status"
+            ])
+            .where({
+                externalCode: {
+                    '=': externalCode
+                },
+                startDate: {
+                    '=': startDate
+                }
+            }));
+        if (sfdepartment) {
+            await cds.tx(req).run(UPDATE.entity(namespace + 'Departments').data(sfdepartment));
+        }
+    } catch (error) {
+        req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+        //console.log('erro execute update department');
+    }
+}
+
+async function beforeCreateDepartments(req) {
+    try {
+        // Add SF department to Departments entity if it does not exist yet
+        const item = req.data;
+        const externalCode = (item.department_externalCode) ? item.department_externalCode : null;
+        const startDate = (item.department_startDate) ? item.department_startDate : null;
+        if (externalCode && startDate) {
+            await executeCreatedepartment(req, externalCode, startDate);
+        }
+        return req;
+    } catch (err) {
+        console.log(err.code);
+        console.log(err.message);
+        //req.error(err.code, err.message);
+        //console.log('erro before create department');
+    }
+}
+
+async function beforeUpdateDepartments(req) {
+
+}
+
+async function beforeDeleteDepartments(req) {
+
+}
+
+///////////////////////////////////////////////////////////////////////////
+//BusinessUnits
+//Create BusinessUnit
+async function executeCreateBusinessUnit(req, externalCode, startDate) {
+    try {
+        const businessUnit = await cds.tx(req).run(SELECT.one.from(namespace + 'BusinessUnits').columns(['externalCode', 'startDate'])
+            .where({
+                externalCode: {
+                    '=': externalCode
+                },
+                startDate: {
+                    '=': startDate
+                }
+            }));
+        if (!businessUnit) {
+            const sfBusinessUnit = await FoundationService.tx(req).run(SELECT.one.from('FOBusinessUnit')
+                .columns([
+                    'externalCode',
+                    "startDate",
+                    // "createdBy",
+                    // "createdDateTime",
+                    // "createdOn",
+                    // "currency",
+                    // "defaultLocation",
+                    // "defaultPayGroup",
+                    // "description",
+                    // "description_de_DE",
+                    "description_defaultValue",
+                    // "description_en_GB",
+                    // "description_en_US",
+                    // "description_es_ES",
+                    // "description_fr_FR",
+                    // "description_ja_JP",
+                    // "description_ko_KR",
+                    // "description_localized",
+                    // "description_nl_NL",
+                    // "description_pt_BR",
+                    // "description_pt_PT",
+                    // "description_ru_RU",
+                    // "description_zh_CN",
+                    // "description_zh_TW",
+                    // "endDate",
+                    // "lastModifiedBy",
+                    // "lastModifiedDateTime",
+                    // "lastModifiedOn",
+                    // "name",
+                    // "name_de_DE",
+                    "name_defaultValue",
+                    // "name_en_GB",
+                    // "name_en_US",
+                    // "name_es_ES",
+                    // "name_fr_FR",
+                    // "name_ja_JP",
+                    // "name_ko_KR",
+                    // "name_localized",
+                    // "name_nl_NL",
+                    // "name_pt_BR",
+                    // "name_pt_PT",
+                    // "name_ru_RU",
+                    // "name_zh_CN",
+                    // "name_zh_TW",
+                    // "standardHours",
+                    // "status"
+                ])
+                .where({
+                    externalCode: {
+                        '=': externalCode
+                    },
+                    startDate: {
+                        '=': startDate
+                    }
+                }));
+            if (sfBusinessUnit) {
+                await cds.tx(req).run(INSERT.into(namespace + 'BusinessUnits').entries(sfBusinessUnit));
+            }
+        }
+    } catch (err) {
+        //req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
+        //console.log('erro create BusinessUnit')
+    }
+}
+
+//Update BusinessUnits
+async function executeUpdateBusinessUnit(req, externalCode, startDate) {
+    try {
+        const sfBusinessUnit = await FoundationService.tx(req).run(SELECT.one.from('FOBusinessUnit')
+            .columns([
+                'externalCode',
+                "startDate",
+                // "createdBy",
+                // "createdDateTime",
+                // "createdOn",
+                // "currency",
+                // "defaultLocation",
+                // "defaultPayGroup",
+                // "description",
+                // "description_de_DE",
+                "description_defaultValue",
+                // "description_en_GB",
+                // "description_en_US",
+                // "description_es_ES",
+                // "description_fr_FR",
+                // "description_ja_JP",
+                // "description_ko_KR",
+                // "description_localized",
+                // "description_nl_NL",
+                // "description_pt_BR",
+                // "description_pt_PT",
+                // "description_ru_RU",
+                // "description_zh_CN",
+                // "description_zh_TW",
+                // "endDate",
+                // "lastModifiedBy",
+                // "lastModifiedDateTime",
+                // "lastModifiedOn",
+                // "name",
+                // "name_de_DE",
+                "name_defaultValue",
+                // "name_en_GB",
+                // "name_en_US",
+                // "name_es_ES",
+                // "name_fr_FR",
+                // "name_ja_JP",
+                // "name_ko_KR",
+                // "name_localized",
+                // "name_nl_NL",
+                // "name_pt_BR",
+                // "name_pt_PT",
+                // "name_ru_RU",
+                // "name_zh_CN",
+                // "name_zh_TW",
+                // "standardHours",
+                // "status"
+            ])
+            .where({
+                externalCode: {
+                    '=': externalCode
+                },
+                startDate: {
+                    '=': startDate
+                }
+            }));
+        if (sfBusinessUnit) {
+            await cds.tx(req).run(UPDATE.entity(namespace + 'BusinessUnits').data(sfBusinessUnit));
+        }
+    } catch (error) {
+        req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+        //console.log('erro execute update BusinessUnit');
+    }
+}
+
+async function beforeCreateBusinessUnits(req) {
+    try {
+        // Add SF BusinessUnit to BusinessUnits entity if it does not exist yet
+        const item = req.data;
+        const externalCode = (item.businessUnit_externalCode) ? item.businessUnit_externalCode : null;
+        const startDate = (item.businessUnit_startDate) ? item.businessUnit_startDate : null;
+        if (externalCode && startDate) {
+            await executeCreateBusinessUnit(req, externalCode, startDate);
+        }
+        return req;
+    } catch (err) {
+        console.log(err.code);
+        console.log(err.message);
+        //req.error(err.code, err.message);
+        //console.log('erro before create BusinessUnit');
+    }
+}
+
+async function beforeUpdateBusinessUnits(req) {
+
+}
+
+async function beforeDeleteBusinessUnits(req) {
+
+}
+
 
 module.exports = {
     // readSF_Positions,
@@ -810,7 +1400,18 @@ module.exports = {
     beforeCreateCostCenters,
     beforeUpdateCostCenters,
     beforeDeleteCostCenters,
-    // beforeCreateCompanies,
-    // beforeUpdateCompanies,
-    // beforeDeleteCompanies,
+    beforeCreateCompanies,
+    beforeUpdateCompanies,
+    beforeDeleteCompanies,
+    beforeCreateDivisions,
+    beforeUpdateDivisions,
+    beforeDeleteDivisions,
+    beforeCreateDepartments,
+    beforeUpdateDepartments,
+    beforeDeleteDepartments,
+    beforeCreateBusinessUnits,
+    beforeUpdateBusinessUnits,
+    beforeDeleteBusinessUnits,
+
+
 }

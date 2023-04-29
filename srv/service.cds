@@ -20,16 +20,14 @@ service CatalogService @(
     } actions {
       action sendRequestForApproval()
     };
-  annotate Requests with @odata.draft.enabled;
-  annotate Requests with @fiori.draft.enabled;
 
   entity Status                         as projection on my.Status;
   annotate Status with @(requires: 'Admin');
   entity Positions                      as projection on my.Positions;
   annotate Positions with @(requires: 'Admin');
 
-  // entity Companies as projection on my.Companies;
-  // annotate Companies with @(requires: 'Admin');
+  entity Companies as projection on my.Companies;
+  annotate Companies with @(requires: 'Admin');
 
   entity JobCodes                       as projection on my.JobCodes;
   annotate JobCodes with @(requires: 'Admin');

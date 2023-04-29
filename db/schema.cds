@@ -18,10 +18,10 @@ entity Requests : cuid {
     parentPosition : Association to one Positions;
     jobCode        : Association to one JobCodes;
     costCenter     : Association to one CostCenters;
-    company        : Association to one SF_Companies;
-    businessUnit   : Association to one SF_BusinessUnits;
-    division       : Association to one SF_Divisions;
-    department     : Association to one SF_Departments;
+    company        : Association to one Companies;
+    businessUnit   : Association to one BusinessUnits;
+    division       : Association to one Divisions;
+    department     : Association to one Departments;
     startDate      : DateTime;
     budgetCap      : Decimal default 0.00;
     budget         : Decimal default 0.00;
@@ -117,74 +117,87 @@ entity JobCodes {
 //     code: String;
 // }
 
-// @readonly
-// @cds.autoexpose
-// entity Companies {
-//     key externalCode             : String;
-//     key startDate                : String;
-//         country                  : String;
-//         createdBy                : String;
-//         createdDateTime          : String;
-//         createdOn                : String;
-//         currency                 : String;
-//         defaultLocation          : String;
-//         defaultPayGroup          : String;
-//         description              : String;
-//         description_de_DE        : String;
-//         description_defaultValue : String;
-//         description_en_GB        : String;
-//         description_en_US        : String;
-//         description_es_ES        : String;
-//         description_fr_FR        : String;
-//         description_ja_JP        : String;
-//         description_ko_KR        : String;
-//         description_localized    : String;
-//         description_nl_NL        : String;
-//         description_pt_BR        : String;
-//         description_pt_PT        : String;
-//         description_ru_RU        : String;
-//         description_zh_CN        : String;
-//         description_zh_TW        : String;
-//         endDate                  : String;
-//         lastModifiedBy           : String;
-//         lastModifiedDateTime     : String;
-//         lastModifiedOn           : String;
-//         name                     : String;
-//         name_de_DE               : String;
-//         name_defaultValue        : String;
-//         name_en_GB               : String;
-//         name_en_US               : String;
-//         name_es_ES               : String;
-//         name_fr_FR               : String;
-//         name_ja_JP               : String;
-//         name_ko_KR               : String;
-//         name_localized           : String;
-//         name_nl_NL               : String;
-//         name_pt_BR               : String;
-//         name_pt_PT               : String;
-//         name_ru_RU               : String;
-//         name_zh_CN               : String;
-//         name_zh_TW               : String;
-//         standardHours            : Integer;
-//         status                   : String;
-// }
+@readonly
+@cds.autoexpose
+entity Companies {
+    key externalCode             : String;
+    key startDate                : String;
+        country                  : String;
+        createdBy                : String;
+        createdDateTime          : String;
+        createdOn                : String;
+        currency                 : String;
+        defaultLocation          : String;
+        defaultPayGroup          : String;
+        description              : String;
+        description_de_DE        : String;
+        description_defaultValue : String;
+        description_en_GB        : String;
+        description_en_US        : String;
+        description_es_ES        : String;
+        description_fr_FR        : String;
+        description_ja_JP        : String;
+        description_ko_KR        : String;
+        description_localized    : String;
+        description_nl_NL        : String;
+        description_pt_BR        : String;
+        description_pt_PT        : String;
+        description_ru_RU        : String;
+        description_zh_CN        : String;
+        description_zh_TW        : String;
+        endDate                  : String;
+        lastModifiedBy           : String;
+        lastModifiedDateTime     : String;
+        lastModifiedOn           : String;
+        name                     : String;
+        name_de_DE               : String;
+        name_defaultValue        : String;
+        name_en_GB               : String;
+        name_en_US               : String;
+        name_es_ES               : String;
+        name_fr_FR               : String;
+        name_ja_JP               : String;
+        name_ko_KR               : String;
+        name_localized           : String;
+        name_nl_NL               : String;
+        name_pt_BR               : String;
+        name_pt_PT               : String;
+        name_ru_RU               : String;
+        name_zh_CN               : String;
+        name_zh_TW               : String;
+        standardHours            : Integer;
+        status                   : String;
+}
 
-// @readonly
-// @cds.autoexpose
-// entity BusinessUnits {
-//     externalCode             : String;
-//     entityUUID               : UUID;
-//     description_defaultValue : String;
-// }
+@readonly
+@cds.autoexpose
+entity BusinessUnits {
+    key externalCode             : String;
+    key startDate                : String;
+        description_defaultValue : String;
+        name_defaultValue : String;
+}
 
-// @readonly
-// @cds.autoexpose
-// entity Departments {
-//     externalCode             : String;
-//     entityUUID               : UUID;
-//     description_defaultValue : String;
-// }
+@readonly
+@cds.autoexpose
+entity Divisions {
+    key externalCode             : String;
+    key startDate                : String;
+        description_defaultValue : String;
+        name_defaultValue : String;
+}
 
+@readonly
+@cds.autoexpose
+entity Departments {
+    key externalCode             : String;
+    key startDate                : String;
+        description_defaultValue : String;
+        name_defaultValue : String;
+}
+
+@readonly
+@cds.autoexpose
 entity SF_PositionMatrixRelationships as
     select from PosMan_API.PositionMatrixRelationship {
         key Position_code,
@@ -195,6 +208,8 @@ entity SF_PositionMatrixRelationships as
             relatedPositionNav
     };
 
+@readonly
+@cds.autoexpose
 entity SF_Positions                   as
     select from PosMan_API.Position {
         key code,
@@ -219,6 +234,8 @@ entity SF_Positions                   as
 
     };
 
+@readonly
+@cds.autoexpose
 entity SF_CostCenters                 as
     select from Foundation_API.FOCostCenter {
         key externalCode,
@@ -231,6 +248,8 @@ entity SF_CostCenters                 as
             createdBy
     };
 
+@readonly
+@cds.autoexpose
 entity SF_Companies                   as
     select from Foundation_API.FOCompany {
         key externalCode,
@@ -282,6 +301,8 @@ entity SF_Companies                   as
             status
     };
 
+@readonly
+@cds.autoexpose
 entity SF_BusinessUnits               as
     select from Foundation_API.FOBusinessUnit {
         key externalCode,
@@ -301,6 +322,8 @@ entity SF_BusinessUnits               as
             status
     };
 
+@readonly
+@cds.autoexpose
 entity SF_Divisions                   as
     select from Foundation_API.FODivision {
         key externalCode,
@@ -323,6 +346,8 @@ entity SF_Divisions                   as
 
     };
 
+@readonly
+@cds.autoexpose
 entity SF_Departments                 as
     select from Foundation_API.FODepartment {
         key externalCode,
@@ -347,6 +372,8 @@ entity SF_Departments                 as
 
     };
 
+@readonly
+@cds.autoexpose
 entity SF_JobCodes                    as
     select from Foundation_API.FOJobCode {
         key externalCode,

@@ -20,10 +20,19 @@ const {
     beforeCreateCostCenters,
     beforeUpdateCostCenters,
     beforeDeleteCostCenters,
-    // beforeCreateCompanies,
-    // beforeUpdateCompanies,
-    // beforeDeleteCompanies,
-    afterUp
+    beforeCreateCompanies,
+    beforeUpdateCompanies,
+    beforeDeleteCompanies,
+    beforeCreateDivisions,
+    beforeUpdateDivisions,
+    beforeDeleteDivisions,
+    beforeCreateDepartments,
+    beforeUpdateDepartments,
+    beforeDeleteDepartments,
+    beforeCreateBusinessUnits,
+    beforeUpdateBusinessUnits,
+    beforeDeleteBusinessUnits,
+
 } = require('./lib/handlers');
 
 module.exports = cds.service.impl(async function () {
@@ -32,7 +41,10 @@ module.exports = cds.service.impl(async function () {
         Requests,
         Positions,
         CostCenters,
-        // Companies,
+        Companies,
+        Divisions,
+        Departments,
+        BusinessUnits,
         SF_Positions,
         SF_JobCodes,
         SF_CostCenters,
@@ -69,15 +81,27 @@ module.exports = cds.service.impl(async function () {
     this.before('UPDATE', CostCenters, beforeUpdateCostCenters);
     this.before('DELETE', CostCenters, beforeDeleteCostCenters);
 
-    this.before('PATCH', Requests, async req => {
+    // this.before('PATCH', Requests, async req => {
 
-        console.log("before patch")
+    //     console.log("before patch")
 
-    });
+    // });
 
-    // this.before('CREATE', Companies, beforeCreateCompanies);
-    // this.before('UPDATE', Companies, beforeUpdateCompanies);
-    // this.before('DELETE', Companies, beforeDeleteCompanies);
+    this.before('CREATE', Companies, beforeCreateCompanies);
+    this.before('UPDATE', Companies, beforeUpdateCompanies);
+    this.before('DELETE', Companies, beforeDeleteCompanies);
+
+    this.before('CREATE', Divisions, beforeCreateDivisions);
+    this.before('UPDATE', Divisions, beforeUpdateDivisions);
+    this.before('DELETE', Divisions, beforeDeleteDivisions);
+
+    this.before('CREATE', Departments, beforeCreateDepartments);
+    this.before('UPDATE', Departments, beforeUpdateDepartments);
+    this.before('DELETE', Departments, beforeDeleteDepartments);
+
+    this.before('CREATE', BusinessUnits, beforeCreateBusinessUnits);
+    this.before('UPDATE', BusinessUnits, beforeUpdateBusinessUnits);
+    this.before('DELETE', BusinessUnits, beforeDeleteBusinessUnits);
 
     // AFTER events
     this.after('SAVE', Requests, afterSaveRequests);
