@@ -8,11 +8,6 @@ const {
     afterSaveRequests,
     afterReadRequests,
     afterPatchRequests,
-    // readSF_Positions,
-    // readSF_CostCenters,
-    // readSF_PositionMatrixRelationships,
-    // readSF_Companies,
-    // readSF_JobCodes,
     readSF_Entities,
     beforeCreatePositions,
     beforeUpdatePositions,
@@ -32,7 +27,9 @@ const {
     beforeCreateBusinessUnits,
     beforeUpdateBusinessUnits,
     beforeDeleteBusinessUnits,
-
+    beforeCreateJobCodes,
+    beforeUpdateJobCodes,
+    beforeDeleteJobCodes,
 } = require('./lib/handlers');
 
 module.exports = cds.service.impl(async function () {
@@ -45,6 +42,7 @@ module.exports = cds.service.impl(async function () {
         Divisions,
         Departments,
         BusinessUnits,
+        JobCodes,
         SF_Positions,
         SF_JobCodes,
         SF_CostCenters,
@@ -102,6 +100,10 @@ module.exports = cds.service.impl(async function () {
     this.before('CREATE', BusinessUnits, beforeCreateBusinessUnits);
     this.before('UPDATE', BusinessUnits, beforeUpdateBusinessUnits);
     this.before('DELETE', BusinessUnits, beforeDeleteBusinessUnits);
+
+    this.before('CREATE', JobCodes, beforeCreateJobCodes);
+    this.before('UPDATE', JobCodes, beforeUpdateJobCodes);
+    this.before('DELETE', JobCodes, beforeDeleteJobCodes);
 
     // AFTER events
     this.after('SAVE', Requests, afterSaveRequests);

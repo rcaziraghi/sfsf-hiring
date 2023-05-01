@@ -12,7 +12,6 @@ namespace deloitte.hiring.db;
 entity Requests : cuid {
     title          : localized String;
     description    : localized String;
-    //template  : Association to one Templates;
     status         : Association to one Status;
     position       : Association to one Positions;
     parentPosition : Association to one Positions;

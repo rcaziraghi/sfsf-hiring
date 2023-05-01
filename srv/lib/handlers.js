@@ -36,76 +36,6 @@ function removeColumnsFromOrderBy(query, columnNames) {
 }
 
 /*** HANDLERS ***/
-// // Read SF Positions
-// async function readSF_Positions(req) {
-//     try {
-//         // Columns that are not sortable must be removed from "order by"
-//         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
-
-//         // Handover to the SF OData Service to fecth the requested data
-//         const tx = PositionService.tx(req);
-//         return await tx.run(req.query);
-//     } catch (err) {
-//         req.error(err.code, err.message);
-//     }
-// }
-
-// // Read SF Positions
-// async function readSF_PositionMatrixRelationships(req) {
-//     try {
-//         // Columns that are not sortable must be removed from "order by"
-//         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
-
-//         // Handover to the SF OData Service to fecth the requested data
-//         const tx = PositionService.tx(req);
-//         return await tx.run(req.query);
-//     } catch (err) {
-//         req.error(err.code, err.message);
-//     }
-// }
-
-// // Read SF Cost Centers
-// async function readSF_CostCenters(req) {
-//     try {
-//         // Columns that are not sortable must be removed from "order by"
-//         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
-
-//         // Handover to the SF OData Service to fecth the requested data
-//         const tx = FoundationService.tx(req);
-//         return await tx.run(req.query);
-//     } catch (err) {
-//         req.error(err.code, err.message);
-//     }
-// }
-
-// // Read SF Companies
-// async function readSF_Companies(req) {
-//     try {
-//         // Columns that are not sortable must be removed from "order by"
-//         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
-
-//         // Handover to the SF OData Service to fecth the requested data
-//         const tx = FoundationService.tx(req);
-//         return await tx.run(req.query);
-//     } catch (err) {
-//         req.error(err.code, err.message);
-//     }
-// }
-
-// // Read SF JobCodes
-// async function readSF_JobCodes(req) {
-//     try {
-//         // Columns that are not sortable must be removed from "order by"
-//         req.query = removeColumnsFromOrderBy(req.query, ['defaultFullName']);
-
-//         // Handover to the SF OData Service to fecth the requested data
-//         const tx = FoundationService.tx(req);
-//         return await tx.run(req.query);
-//     } catch (err) {
-//         req.error(err.code, err.message);
-//     }
-// }
-
 // Read SF entities
 async function readSF_Entities(req) {
     try {
@@ -116,7 +46,7 @@ async function readSF_Entities(req) {
         const tx = FoundationService.tx(req);
         return await tx.run(req.query);
     } catch (err) {
-        //req.error(err.code, err.message);
+        req.error(err.code, err.message);
     }
 }
 
@@ -135,7 +65,7 @@ async function onSendRequestForApproval(req) {
 
 // Before "save" project (exclusive for Fiori Draft support)
 async function beforeSaveRequests(req) {
-    console.log('beforeSaveRequests')
+
     try {
 
         if (req.data.position_code) {
@@ -234,9 +164,27 @@ async function beforeSaveRequests(req) {
             }
         }
 
+        if (req.data.jobCode_externalCode) {
+            let jobCode = await cds.tx(req).run(SELECT.one.from(namespace + 'JobCodes').columns(['externalCode', 'startDate']).where({
+                externalCode: {
+                    '=': req.data.jobCode_externalCode
+                },
+                startDate: {
+                    '=': req.data.jobCode_startDate
+                }
+            }));
+            if (!jobCode) {
+                await executeCreateJobCode(req, req.data.jobCode_externalCode, req.data.jobCode_startDate)
+            } else {
+                await executeUpdateJobCode(req, req.data.jobCode_externalCode, req.data.jobCode_startDate)
+            }
+        }
+
         return req;
     } catch (err) {
-        req.error(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
     }
 }
 
@@ -252,6 +200,7 @@ async function beforeCreateRequests(req) {
     }
 }
 
+//Update virtual fields
 async function afterReadRequests(Requests, req) {
     try {
         if (Array.isArray(Requests)) {
@@ -261,7 +210,6 @@ async function afterReadRequests(Requests, req) {
         } else {
             Requests = await updateBudgetInfo(Requests, req);
         }
-        //console.log(Requests);
         return Requests;
     } catch (err) {
         req.error(err.code, err.message);
@@ -270,7 +218,6 @@ async function afterReadRequests(Requests, req) {
 
 //Update the organizational units based on template
 async function afterPatchRequests(Requests, req) {
-    //console.log("afterPatchRequests")
     try {
         if (Array.isArray(Requests)) {
             return Promise.all(Requests.map(async Request => {
@@ -279,7 +226,6 @@ async function afterPatchRequests(Requests, req) {
         } else {
             Requests = await updateOrganizational(Requests, req);
         }
-        //console.log(Requests);
         return Requests;
     } catch (err) {
         req.error(err.code, err.message);
@@ -288,6 +234,7 @@ async function afterPatchRequests(Requests, req) {
     }
 }
 
+//Update organizational entities based on template
 async function updateOrganizational(Request, req) {
 
     let updated = false;
@@ -314,16 +261,14 @@ async function updateOrganizational(Request, req) {
 
         if (templatesfPosition) {
 
-            //console.log(templatesfPosition);
-
-            if (!RequestDraftOrganizational.TITLE) {
+            if (!RequestDraftOrganizational.TITLE && templatesfPosition.positionTitle) {
 
                 RequestDraftOrganizational.TITLE = templatesfPosition.positionTitle;
                 updated = true;
 
             }
 
-            if (!RequestDraftOrganizational.COSTCENTER_EXTERNALCODE) {
+            if (!RequestDraftOrganizational.COSTCENTER_EXTERNALCODE && templatesfPosition.costCenter) {
 
                 const sfCostCenter = await FoundationService.tx(req).run(SELECT.one.from('FOCostCenter')
                     .columns(['externalCode', 'startDate'])
@@ -346,7 +291,7 @@ async function updateOrganizational(Request, req) {
 
             }
 
-            if (!RequestDraftOrganizational.COMPANY_EXTERNALCODE) {
+            if (!RequestDraftOrganizational.COMPANY_EXTERNALCODE && templatesfPosition.company) {
 
                 const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
                     .columns(['externalCode', 'startDate'])
@@ -369,7 +314,7 @@ async function updateOrganizational(Request, req) {
 
             }
 
-            if (!RequestDraftOrganizational.DIVISION_EXTERNALCODE) {
+            if (!RequestDraftOrganizational.DIVISION_EXTERNALCODE && templatesfPosition.division) {
 
                 const sfDivision = await FoundationService.tx(req).run(SELECT.one.from('FODivision')
                     .columns(['externalCode', 'startDate'])
@@ -392,7 +337,7 @@ async function updateOrganizational(Request, req) {
 
             }
 
-            if (!RequestDraftOrganizational.BUSINESSUNIT_EXTERNALCODE) {
+            if (!RequestDraftOrganizational.BUSINESSUNIT_EXTERNALCODE && templatesfPosition.businessUnit) {
 
                 const sfBusinessUnit = await FoundationService.tx(req).run(SELECT.one.from('FOBusinessUnit')
                     .columns(['externalCode', 'startDate'])
@@ -415,7 +360,7 @@ async function updateOrganizational(Request, req) {
 
             }
 
-            if (!RequestDraftOrganizational.DEPARTMENT_EXTERNALCODE) {
+            if (!RequestDraftOrganizational.DEPARTMENT_EXTERNALCODE && templatesfPosition.department) {
 
                 const sfDepartment = await FoundationService.tx(req).run(SELECT.one.from('FODepartment')
                     .columns(['externalCode', 'startDate'])
@@ -438,7 +383,7 @@ async function updateOrganizational(Request, req) {
 
             }
 
-            if (!RequestDraftOrganizational.JOBCODE_EXTERNALCODE) {
+            if (!RequestDraftOrganizational.JOBCODE_EXTERNALCODE && templatesfPosition.jobCode) {
 
                 const sfJobCode = await FoundationService.tx(req).run(SELECT.one.from('FOJobCode')
                     .columns(['externalCode', 'startDate'])
@@ -461,7 +406,23 @@ async function updateOrganizational(Request, req) {
 
             }
 
+            //console.log(RequestDraftOrganizational.BUDGET);
+            //console.log(RequestDraftOrganizational.BUDGETCAP);
+            //TODO get CostCenter
+            if (RequestDraftOrganizational.BUDGET == 0e+0 && RequestDraftOrganizational.BUDGETCAP == 0e+0) {
+
+
+                RequestDraftOrganizational.BUDGET = 1110000.00;
+                RequestDraftOrganizational.BUDGETCAP = 1250000.00;
+                RequestDraftOrganizational.CURRENCY_CODE = 'EUR';
+                //console.log(RequestDraftOrganizational.BUDGET);
+                //console.log(RequestDraftOrganizational.BUDGETCAP);
+                updated = true;
+
+            }
+
             if (updated) {
+                //console.log(RequestDraftOrganizational)
                 await cds.tx(req).run(UPDATE.entity(namespaceCatalogService + 'Requests_drafts').data(RequestDraftOrganizational));
             }
 
@@ -529,9 +490,9 @@ async function executeCreatePosition(req, code, effectiveStartDate) {
             }
         }
     } catch (err) {
-        //console.log(err)
-        //console.log(err.code, err.message);
-        req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
+        //req.error(err.code, err.message);
     }
 }
 
@@ -581,7 +542,6 @@ async function beforeDeletePositions(req) {
 //Create CostCenter
 async function executeCreateCostCenter(req, externalCode, startDate) {
     try {
-        console.log('executeCreateCostCenter');
         const CostCenter = await cds.tx(req).run(SELECT.one.from(namespace + 'CostCenters').columns(['externalCode', 'startDate'])
             .where({
                 externalCode: {
@@ -607,15 +567,14 @@ async function executeCreateCostCenter(req, externalCode, startDate) {
             }
         }
     } catch (err) {
-        console.log(err)
-        console.log(err.code, err.message);
+        //console.log(err)
+        //console.log(err.code, err.message);
         req.error(err.code, err.message);
     }
 }
 
 //Update CostCenters
 async function executeUpdateCostCenter(req, externalCode, startDate) {
-    console.log('executeUpdateCostCenter');
     const sfCostCenter = await FoundationService.tx(req).run(SELECT.one.from('FOCostCenter')
         .columns(['externalCode', 'startDate', 'costcenterExternalObjectID', 'costcenterManager', 'createdDateTime', 'description', 'description_defaultValue', 'createdBy'])
         .where({
@@ -659,7 +618,6 @@ async function beforeDeleteCostCenters(req) {
 //Create Company
 async function executeCreateCompany(req, externalCode, startDate) {
     try {
-        console.log('executeCreateCompany');
         const Company = await cds.tx(req).run(SELECT.one.from(namespace + 'Companies').columns(['externalCode', 'startDate'])
             .where({
                 externalCode: {
@@ -742,7 +700,6 @@ async function executeCreateCompany(req, externalCode, startDate) {
 //Update Companies
 async function executeUpdateCompany(req, externalCode, startDate) {
     try {
-        console.log('executeUpdateCompany');
         const sfCompany = await FoundationService.tx(req).run(SELECT.one.from('FOCompany')
             .columns([
                 'externalCode',
@@ -807,7 +764,6 @@ async function executeUpdateCompany(req, externalCode, startDate) {
         //console.log(err.code);
         //console.log(err.message);
         req.error(err.code, err.message);
-        //console.log('erro execute update company');
     }
 }
 
@@ -825,7 +781,6 @@ async function beforeCreateCompanies(req) {
         //console.log(err.code);
         //console.log(err.message);
         req.error(err.code, err.message);
-        //console.log('erro before create company');
     }
 }
 
@@ -917,7 +872,6 @@ async function executeCreateDivision(req, externalCode, startDate) {
         //req.error(err.code, err.message);
         console.log(err)
         console.log(err.code, err.message);
-        //console.log('erro create Division')
     }
 }
 
@@ -986,9 +940,8 @@ async function executeUpdateDivision(req, externalCode, startDate) {
         }
     } catch (error) {
         req.error(err.code, err.message);
-        console.log(err.code);
-        console.log(err.message);
-        //console.log('erro execute update Division');
+        //console.log(err.code);
+        //console.log(err.message);
     }
 }
 
@@ -1003,10 +956,9 @@ async function beforeCreateDivisions(req) {
         }
         return req;
     } catch (err) {
-        console.log(err.code);
-        console.log(err.message);
-        //req.error(err.code, err.message);
-        //console.log('erro before create Division');
+        //console.log(err.code);
+        //console.log(err.message);
+        req.error(err.code, err.message);
     }
 }
 
@@ -1033,7 +985,7 @@ async function executeCreateDepartment(req, externalCode, startDate) {
                 }
             }));
         if (!department) {
-            const sfdepartment = await FoundationService.tx(req).run(SELECT.one.from('FODepartment')
+            const sfDepartment = await FoundationService.tx(req).run(SELECT.one.from('FODepartment')
                 .columns([
                     'externalCode',
                     "startDate",
@@ -1090,22 +1042,21 @@ async function executeCreateDepartment(req, externalCode, startDate) {
                         '=': startDate
                     }
                 }));
-            if (sfdepartment) {
-                await cds.tx(req).run(INSERT.into(namespace + 'Departments').entries(sfdepartment));
+            if (sfDepartment) {
+                await cds.tx(req).run(INSERT.into(namespace + 'Departments').entries(sfDepartment));
             }
         }
     } catch (err) {
-        //req.error(err.code, err.message);
-        console.log(err)
-        console.log(err.code, err.message);
-        //console.log('erro create department')
+        req.error(err.code, err.message);
+        //console.log(err)
+        //console.log(err.code, err.message);
     }
 }
 
 //Update Departments
-async function executeUpdatedepartment(req, externalCode, startDate) {
+async function executeUpdateDepartment(req, externalCode, startDate) {
     try {
-        const sfdepartment = await FoundationService.tx(req).run(SELECT.one.from('FOdepartment')
+        const sfDepartment = await FoundationService.tx(req).run(SELECT.one.from('FOdepartment')
             .columns([
                 'externalCode',
                 "startDate",
@@ -1162,13 +1113,13 @@ async function executeUpdatedepartment(req, externalCode, startDate) {
                     '=': startDate
                 }
             }));
-        if (sfdepartment) {
-            await cds.tx(req).run(UPDATE.entity(namespace + 'Departments').data(sfdepartment));
+        if (sfDepartment) {
+            await cds.tx(req).run(UPDATE.entity(namespace + 'Departments').data(sfDepartment));
         }
     } catch (error) {
         req.error(err.code, err.message);
-        console.log(err.code);
-        console.log(err.message);
+        //console.log(err.code);
+        //console.log(err.message);
         //console.log('erro execute update department');
     }
 }
@@ -1180,14 +1131,13 @@ async function beforeCreateDepartments(req) {
         const externalCode = (item.department_externalCode) ? item.department_externalCode : null;
         const startDate = (item.department_startDate) ? item.department_startDate : null;
         if (externalCode && startDate) {
-            await executeCreatedepartment(req, externalCode, startDate);
+            await executeCreateDepartment(req, externalCode, startDate);
         }
         return req;
     } catch (err) {
-        console.log(err.code);
-        console.log(err.message);
-        //req.error(err.code, err.message);
-        //console.log('erro before create department');
+        //console.log(err.code);
+        //console.log(err.message);
+        req.error(err.code, err.message);
     }
 }
 
@@ -1276,10 +1226,9 @@ async function executeCreateBusinessUnit(req, externalCode, startDate) {
             }
         }
     } catch (err) {
-        //req.error(err.code, err.message);
-        console.log(err)
-        console.log(err.code, err.message);
-        //console.log('erro create BusinessUnit')
+        req.error(err.code, err.message);
+        //console.log(err)
+        //console.log(err.code, err.message);
     }
 }
 
@@ -1348,9 +1297,8 @@ async function executeUpdateBusinessUnit(req, externalCode, startDate) {
         }
     } catch (error) {
         req.error(err.code, err.message);
-        console.log(err.code);
-        console.log(err.message);
-        //console.log('erro execute update BusinessUnit');
+        //console.log(err.code);
+        //console.log(err.message);
     }
 }
 
@@ -1365,10 +1313,9 @@ async function beforeCreateBusinessUnits(req) {
         }
         return req;
     } catch (err) {
-        console.log(err.code);
-        console.log(err.message);
-        //req.error(err.code, err.message);
-        //console.log('erro before create BusinessUnit');
+        //console.log(err.code);
+        //console.log(err.message);
+        req.error(err.code, err.message);
     }
 }
 
@@ -1380,13 +1327,140 @@ async function beforeDeleteBusinessUnits(req) {
 
 }
 
+///////////////////////////////////////////////////////////////////////////
+//JobCodes
+//Create JobCode
+async function executeCreateJobCode(req, externalCode, startDate) {
+    try {
+        const jobCode = await cds.tx(req).run(SELECT.one.from(namespace + 'JobCodes').columns(['externalCode', 'startDate'])
+            .where({
+                externalCode: {
+                    '=': externalCode
+                },
+                startDate: {
+                    '=': startDate
+                }
+            }));
+        if (!jobCode) {
+            const sfJobCode = await FoundationService.tx(req).run(SELECT.one.from('FOJobCode')
+                .columns([
+                    'externalCode',
+                    "startDate",
+                    "createdBy",
+                    "createdDateTime",
+                    "createdOn",
+                    "employeeClass",
+                    "endDate",
+                    "grade",
+                    "isFulltimeEmployee",
+                    "isRegular",
+                    "jobFunction",
+                    "jobLevel",
+                    "lastModifiedBy",
+                    "lastModifiedDateTime",
+                    "lastModifiedOn",
+                    "name",
+                    "name_defaultValue",
+                    "name_localized",
+                    "parentJobCode",
+                    "standardHours",
+                    "status",
+                    "supervisorLevel",
+                    "workerCompCode"
+                ])
+                .where({
+                    externalCode: {
+                        '=': externalCode
+                    },
+                    startDate: {
+                        '=': startDate
+                    }
+                }));
+            if (sfJobCode) {
+                await cds.tx(req).run(INSERT.into(namespace + 'JobCodes').entries(sfJobCode));
+            }
+        }
+    } catch (err) {
+        req.error(err.code, err.message);
+        //console.log(err)
+        //console.log(err.code, err.message);
+    }
+}
+
+//Update JobCodes
+async function executeUpdateJobCode(req, externalCode, startDate) {
+    try {
+        const sfJobCode = await FoundationService.tx(req).run(SELECT.one.from('FOJobCode')
+            .columns([
+                'externalCode',
+                "startDate",
+                "createdBy",
+                "createdDateTime",
+                "createdOn",
+                "employeeClass",
+                "endDate",
+                "grade",
+                "ifFulltimeEmployee",
+                "isRegular",
+                "jobFunction",
+                "jobLevel",
+                "lastModifiedBy",
+                "lastModifiedDateTime",
+                "lastModifiedOn",
+                "name",
+                "name_defaultValue",
+                "name_localized",
+                "parentJobCode",
+                "standardHours",
+                "status",
+                "supervisorLevel",
+                "workerCompCode"
+            ])
+            .where({
+                externalCode: {
+                    '=': externalCode
+                },
+                startDate: {
+                    '=': startDate
+                }
+            }));
+        if (sfJobCode) {
+            await cds.tx(req).run(UPDATE.entity(namespace + 'JobCodes').data(sfJobCode));
+        }
+    } catch (error) {
+        req.error(err.code, err.message);
+        //console.log(err.code);
+        //console.log(err.message);
+    }
+}
+
+async function beforeCreateJobCodes(req) {
+    try {
+        // Add SF JobCode to JobCodes entity if it does not exist yet
+        const item = req.data;
+        const externalCode = (item.jobCode_externalCode) ? item.jobCode_externalCode : null;
+        const startDate = (item.jobCode_startDate) ? item.jobCode_startDate : null;
+        if (externalCode && startDate) {
+            await executeCreateJobCode(req, externalCode, startDate);
+        }
+        return req;
+    } catch (err) {
+        //console.log(err.code);
+        //console.log(err.message);
+        req.error(err.code, err.message);
+    }
+}
+
+async function beforeUpdateJobCodes(req) {
+
+}
+
+async function beforeDeleteJobCodes(req) {
+
+}
+
 
 module.exports = {
-    // readSF_Positions,
-    // readSF_CostCenters,
-    // readSF_PositionMatrixRelationships,
-    // readSF_Companies,
-    // readSF_JobCodes,
     readSF_Entities,
     onSendRequestForApproval,
     beforeSaveRequests,
@@ -1412,6 +1486,7 @@ module.exports = {
     beforeCreateBusinessUnits,
     beforeUpdateBusinessUnits,
     beforeDeleteBusinessUnits,
-
-
+    beforeCreateJobCodes,
+    beforeUpdateJobCodes,
+    beforeDeleteJobCodes,
 }

@@ -137,6 +137,11 @@ annotate service.Requests with @(UI: {
             },
             {
                 $Type: 'UI.DataField',
+                Value: jobCode_externalCode,
+                Label: 'Job code'
+            },
+            {
+                $Type: 'UI.DataField',
                 Value: startDate,
                 Label: 'Início'
             }
@@ -246,6 +251,35 @@ annotate service.Requests with {
             }
         },
         title : 'Posição'
+    );
+    jobCode     @(
+        Common: {
+            Text           : jobCode.name_defaultValue,
+            TextArrangement: #TextFirst,
+            FieldControl   : #Mandatory,
+            ValueList      : {
+                $Type         : 'Common.ValueListType',
+                CollectionPath: 'SF_JobCodes',
+                Parameters    : [
+                    {
+                        $Type            : 'Common.ValueListParameterInOut',
+                        LocalDataProperty: 'jobCode_externalCode',
+                        ValueListProperty: 'externalCode'
+                    },
+                    {
+                        $Type            : 'Common.ValueListParameterInOut',
+                        LocalDataProperty: 'jobCode_startDate',
+                        ValueListProperty: 'startDate'
+                    },
+                    {
+                        $Type            : 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty: 'name_defaultValue'
+                    }
+                ],
+                Label         : 'Job codes'
+            }
+        },
+        title : 'Job code'
     );
     costCenter   @(
         Common: {
@@ -409,11 +443,14 @@ annotate service.Requests with {
         title : 'Departamento'
     );
     budget       @Measures.ISOCurrency: currency_code
-                 @Common              : {Label: 'Budget actual'};
+                 @Common              : {Label: 'Budget actual',
+                                         FieldControl   : #ReadOnly};
     budgetCap    @Measures.ISOCurrency: currency_code
-                 @Common              : {Label: 'Budget Max'};
+                 @Common              : {Label: 'Budget Max',
+                                         FieldControl   : #ReadOnly};
     budgetPer    @Measures.Unit       : '%'
-                 @Common              : {Label: 'Budget %'};
+                 @Common              : {Label: 'Budget %',
+                                         FieldControl   : #ReadOnly};
 }
 
 annotate service.Requests @(Capabilities: {
@@ -656,4 +693,13 @@ annotate service.SF_Departments with {
         TextArrangement: #TextFirst
     }  @title: 'Departamento';
     description_defaultValue @title : 'Departamento'
+}
+
+//////////////// SF_JobCodes
+annotate service.SF_JobCodes with {
+    externalCode          @Common: {
+        Text           : name_defaultValue,
+        TextArrangement: #TextFirst
+    }  @title: 'Job Code';
+    name_defaultValue @title : 'Job Code'
 }
