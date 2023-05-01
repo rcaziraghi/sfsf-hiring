@@ -35,7 +35,7 @@ annotate service.Requests with @(UI: {
     },
     SelectionFields                  : [
         title,
-        startDate,
+        startingDate,
         status.name,
         budgetPer
     ],
@@ -46,7 +46,7 @@ annotate service.Requests with @(UI: {
         },
         {
             $Type: 'UI.DataField',
-            Value: startDate
+            Value: startingDate
         },
         {
             $Type: 'UI.DataField',
@@ -142,7 +142,7 @@ annotate service.Requests with @(UI: {
             },
             {
                 $Type: 'UI.DataField',
-                Value: startDate,
+                Value: startingDate,
                 Label: 'Início'
             }
         ]
@@ -183,12 +183,16 @@ annotate service.Requests with @(UI: {
             {
                 $Type: 'UI.DataField',
                 Value: budget,
-                Label: 'Budget'
+                Label: 'Budget',
+                ![@Common.FieldControl] : #ReadOnly
+
             },
             {
                 $Type: 'UI.DataField',
                 Value: budgetCap,
-                Label: 'Budget Cap'
+                Label: 'Budget Cap',
+                ![@Common.FieldControl] : #ReadOnly
+
             }
         ]
     },
@@ -212,7 +216,11 @@ annotate service.Requests with {
         title: 'Comentários',
         UI.MultiLineText
     );
-    startDate    @(title: 'Início');
+    startingDate    @(
+        Common: {
+            FieldControl: #Mandatory
+        },
+        title: 'Início');
     status       @(
         Common: {
             Text                 : status.name,
@@ -443,12 +451,17 @@ annotate service.Requests with {
         title : 'Departamento'
     );
     budget       @Measures.ISOCurrency: currency_code
-                 @Common              : {Label: 'Budget actual',
-                                         FieldControl   : #ReadOnly};
+                 @Common              : {Label: 'Budget actual'
+                                        //  ,FieldControl   : #ReadOnly
+                                         };
     budgetCap    @Measures.ISOCurrency: currency_code
-                 @Common              : {Label: 'Budget Max',
-                                         FieldControl   : #ReadOnly};
+                 @Common              : {Label: 'Budget Max'
+                                        //  FieldControl   : #ReadOnly
+                                         };
     budgetPer    @Measures.Unit       : '%'
+                 @Common              : {Label: 'Budget %',
+                                         FieldControl   : #ReadOnly};
+    budgetCriticality    @Measures.Unit       : '%'
                  @Common              : {Label: 'Budget %',
                                          FieldControl   : #ReadOnly};
 }

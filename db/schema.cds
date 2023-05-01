@@ -21,7 +21,7 @@ entity Requests : cuid {
     businessUnit   : Association to one BusinessUnits;
     division       : Association to one Divisions;
     department     : Association to one Departments;
-    startDate      : DateTime;
+    startingDate   : Date;
     budgetCap      : Decimal default 0.00;
     budget         : Decimal default 0.00;
     currency       : Currency;
@@ -174,7 +174,7 @@ entity BusinessUnits {
     key externalCode             : String;
     key startDate                : String;
         description_defaultValue : String;
-        name_defaultValue : String;
+        name_defaultValue        : String;
 }
 
 @readonly
@@ -183,7 +183,7 @@ entity Divisions {
     key externalCode             : String;
     key startDate                : String;
         description_defaultValue : String;
-        name_defaultValue : String;
+        name_defaultValue        : String;
 }
 
 @readonly
@@ -192,7 +192,7 @@ entity Departments {
     key externalCode             : String;
     key startDate                : String;
         description_defaultValue : String;
-        name_defaultValue : String;
+        name_defaultValue        : String;
 }
 
 @readonly
