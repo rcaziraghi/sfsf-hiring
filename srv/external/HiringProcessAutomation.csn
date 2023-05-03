@@ -1,0 +1,12 @@
+{
+  "definitions": {
+    "TODO.service": {
+      "kind": "service",
+      "@Capabilities.BatchSupported": false,
+      "@Capabilities.KeyAsSegmentSupported": true
+    }
+  },
+  "meta": {
+    "creator": "cds-import-openapi"
+  }
+}

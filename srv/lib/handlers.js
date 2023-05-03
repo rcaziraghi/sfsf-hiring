@@ -9,6 +9,7 @@ let PositionService = null;
     // Connect to external SF OData services
     FoundationService = await cds.connect.to('ECFoundationOrganization');
     PositionService = await cds.connect.to('ECPositionManagement');
+    HiringRequestPAService = await cds.connect.to('HiringProcessAutomation');
 })();
 
 /*** HELPERS ***/
@@ -56,11 +57,21 @@ async function readSF_Entities(req) {
 async function onSendRequestForApproval(req) {
     try {
 
-        
+        try {
+            const response = await HiringRequestPAService.tx(req).post("/", {
+                approver: "gregor@computerservice-wolf.com",
+                subject: `Approval for ${req.changedEntity} requested`,
+                url: `${uiUrl}/fiori-ui5-1.71.html#Approvals-manage&//Approval(ID=guid'${req.ID}',IsActiveEntity=true)`,
+                body: "Please decide about this request",
+                ID: `guid'${req.ID}'`,
+            });
+        } catch (error) {
+            console.error("Error Message: " + error.message);
+        };
 
-        await UPDATE(req._target).with({
-            status_ID: 3
-        });
+        // await UPDATE(req._target).with({
+        //     status_ID: 3
+        // });
     } catch (err) {
         req.error(err.code, err.message);
     }

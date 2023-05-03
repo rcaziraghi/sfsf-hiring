@@ -1,0 +1,328 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="request">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="ID">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="6d5694ff-67db-478f-ae51-ac89ea756d11" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="title">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="51127af3-e415-4b2e-94ca-d34693cec7a2" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="description">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="c0aa3d42-3fc8-4a23-8f94-5bc0a185f3b0" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="status_id">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="283de2de-e1a1-4902-8ac2-67449c0f7ccb" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="position_code">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="732c1326-9af1-4908-a9f5-b71031964528" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="position_effectiveStartDate">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="8edc959c-0c15-4b90-b2e9-4e776b079c1c" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="parentPosition_code">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="17b3f1fe-d77f-4a18-aa3e-ad8699138e6b" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="parentPosition_effectiveStartDate">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="92130b95-c390-4005-a3af-29b92a273d1c" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="jobCode_externalCode">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="74c824a1-de06-4d01-9155-f1fbd1d1ce2b" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="jobCode_startDate">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="14e6d4bc-c6d3-4af8-a0d0-685bde547f9a" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="costCenter_externalCode">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="078e58a6-7d50-4f10-9629-2f5c59b273c2" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="costCenter_startDate">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="1169a3b6-7525-43ba-95ee-1c7c33dcd99d" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="company_externalCode">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="33f9e7ba-1a69-46a9-9c40-3377f80e9021" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="company_startDate">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="5da59712-941c-4941-bc00-e2c97538cf4d" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="businessUnit_externalCode">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="85327764-3f8a-4e76-ad1a-4b9ef399751c" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="businessUnit_startDate">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="b46109aa-c834-463c-86fe-9653b430b759" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="division_externalCode">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="da891bf1-5792-48fe-bbf7-879625833a9c" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="division_startDate">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="625b2601-1e03-4049-81c4-47a3eeaaeca4" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="department_externalCode">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="5ba04bb3-1602-4a42-92ce-1eeeec27c87e" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="department_startDate">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="9d22506c-3984-49c9-86e0-afe7308acea7" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="startDate">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension></xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:number" name="budgetCap">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="cfe77fb2-731b-4153-870c-d0b0e84cffe3" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:number" name="budget">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="5a07ad1d-9736-4471-8924-2df1e8ac6f79" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="currency">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="9fca5933-5588-40c4-afcb-415251672c0b" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="comments">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="c67fce11-32a3-45e9-92ba-6ae2b50c8fb8" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="status_text">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="2395508e-8ac6-4836-b00e-fbe1f5a4d9fc" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="position_text">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="ad915620-15cd-4023-bbf6-1d9d367e307c" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="parentPosition_text">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="9248c9b2-ef90-4a86-b7ea-3b91e64e32c6" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="jobCode_text">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="e6ebdfad-a5af-436d-9722-93496c8caf08" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="costCenter_text">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="a2b58feb-ea62-4dcb-af6b-04f624f98c08" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="company_text">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="108a2642-a07a-4f4c-94d8-98f16cb0722d" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="businessUnit_text">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="1731d191-a309-4dd8-956f-e7d59fc4a138" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="division_text">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="6e8d08c7-f4e1-4793-871a-b02f1b3c3e82" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="department_text">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="13645a32-4a1c-4216-b96a-3cdc689d8214" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:number" name="budgetPer">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension>
+                                <xs:attribute default="0d795012-3a44-49e4-a6cc-1c4097dc1102" name="uid" type="xs:string"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="$schema" default="http://json-schema.org/draft-07/schema#" type="xs:string"/>
+            <xs:attribute name="title" default="requestEntry" type="xs:string"/>
+            <xs:attribute name="definitions" default="[object Object]" type="xs:string"/>
+            <xs:attribute name="version" default="1" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:attribute default="inputs" name="title" type="xs:string"/>
+    <xs:attribute default="http://json-schema.org/draft-07/schema#" name="$schema" type="xs:string"/>
+    <xs:attribute default="[object Object]" name="definitions" type="xs:string"/>
+</xs:schema>

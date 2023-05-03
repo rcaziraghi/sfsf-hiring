@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "definitionId": {
+      "type": "string"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "request": {
+          "type": "object",
+          "properties": {
+            "ID": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "status_id": {
+              "type": "string"
+            },
+            "position_code": {
+              "type": "string"
+            },
+            "position_effectiveStartDate": {
+              "type": "string"
+            },
+            "parentPosition_code": {
+              "type": "string"
+            },
+            "parentPosition_effectiveStartDate": {
+              "type": "string"
+            },
+            "jobCode_externalCode": {
+              "type": "string"
+            },
+            "jobCode_startDate": {
+              "type": "string"
+            },
+            "costCenter_externalCode": {
+              "type": "string"
+            },
+            "costCenter_startDate": {
+              "type": "string"
+            },
+            "company_externalCode": {
+              "type": "string"
+            },
+            "company_startDate": {
+              "type": "string"
+            },
+            "businessUnit_externalCode": {
+              "type": "string"
+            },
+            "businessUnit_startDate": {
+              "type": "string"
+            },
+            "division_externalCode": {
+              "type": "string"
+            },
+            "division_startDate": {
+              "type": "string"
+            },
+            "department_externalCode": {
+              "type": "string"
+            },
+            "department_startDate": {
+              "type": "string"
+            },
+            "startDate": {
+              "type": "string"
+            },
+            "budgetCap": {
+              "type": "integer"
+            },
+            "budget": {
+              "type": "integer"
+            },
+            "currency": {
+              "type": "string"
+            },
+            "comments": {
+              "type": "string"
+            },
+            "budgetPer": {
+              "type": "number"
+            },
+            "status_text": {
+              "type": "string"
+            },
+            "position_text": {
+              "type": "string"
+            },
+            "parentPosition_text": {
+              "type": "string"
+            },
+            "jobCode_text": {
+              "type": "string"
+            },
+            "costCenter_text": {
+              "type": "string"
+            },
+            "company_text": {
+              "type": "string"
+            },
+            "businessUnit_text": {
+              "type": "string"
+            },
+            "division_text": {
+              "type": "string"
+            },
+            "department_text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "ID",
+            "title",
+            "description",
+            "status_id",
+            "position_code",
+            "position_effectiveStartDate",
+            "parentPosition_code",
+            "parentPosition_effectiveStartDate",
+            "jobCode_externalCode",
+            "jobCode_startDate",
+            "costCenter_externalCode",
+            "costCenter_startDate",
+            "company_externalCode",
+            "company_startDate",
+            "businessUnit_externalCode",
+            "businessUnit_startDate",
+            "division_externalCode",
+            "division_startDate",
+            "department_externalCode",
+            "department_startDate",
+            "startDate",
+            "budgetCap",
+            "budget",
+            "currency",
+            "comments",
+            "budgetPer",
+            "status_text",
+            "position_text",
+            "parentPosition_text",
+            "jobCode_text",
+            "costCenter_text",
+            "company_text",
+            "businessUnit_text",
+            "division_text",
+            "department_text"
+          ]
+        }
+      },
+      "required": [
+        "request"
+      ]
+    }
+  },
+  "required": [
+    "definitionId",
+    "context"
+  ]
+}
