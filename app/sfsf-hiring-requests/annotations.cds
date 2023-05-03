@@ -142,6 +142,11 @@ annotate service.Requests with @(UI: {
             },
             {
                 $Type: 'UI.DataField',
+                Value: description,
+                Label: 'Descrição'
+            },
+            {
+                $Type: 'UI.DataField',
                 Value: startingDate,
                 Label: 'Início'
             }

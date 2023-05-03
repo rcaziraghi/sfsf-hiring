@@ -102,20 +102,6 @@ entity JobCodes {
         workerCompCode       : String;
 }
 
-// @readonly
-// @cds.autoexpose
-// entity JobFunctions {
-//     externalCode: String;
-//     description_defaultValue: String;
-//     name_localized: String;
-// }
-
-// @readonly
-// @cds.autoexpose
-// entity Templates {
-//     code: String;
-// }
-
 @readonly
 @cds.autoexpose
 entity Companies {

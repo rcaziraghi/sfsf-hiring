@@ -55,6 +55,9 @@ async function readSF_Entities(req) {
 //Actions
 async function onSendRequestForApproval(req) {
     try {
+
+        
+
         await UPDATE(req._target).with({
             status_ID: 3
         });
@@ -196,7 +199,9 @@ async function beforeCreateRequests(req) {
         }
         return req;
     } catch (err) {
-        req.error(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code)
+        console.log(err.message)
     }
 }
 
@@ -406,8 +411,6 @@ async function updateOrganizational(Request, req) {
 
             }
 
-            //console.log(RequestDraftOrganizational.BUDGET);
-            //console.log(RequestDraftOrganizational.BUDGETCAP);
             //TODO get CostCenter
             if (RequestDraftOrganizational.BUDGET == 0e+0 && RequestDraftOrganizational.BUDGETCAP == 0e+0) {
 
@@ -415,14 +418,11 @@ async function updateOrganizational(Request, req) {
                 RequestDraftOrganizational.BUDGET = 1110000.00;
                 RequestDraftOrganizational.BUDGETCAP = 1250000.00;
                 RequestDraftOrganizational.CURRENCY_CODE = 'EUR';
-                //console.log(RequestDraftOrganizational.BUDGET);
-                //console.log(RequestDraftOrganizational.BUDGETCAP);
                 updated = true;
 
             }
 
             if (updated) {
-                //console.log(RequestDraftOrganizational)
                 await cds.tx(req).run(UPDATE.entity(namespaceCatalogService + 'Requests_drafts').data(RequestDraftOrganizational));
             }
 
@@ -490,9 +490,9 @@ async function executeCreatePosition(req, code, effectiveStartDate) {
             }
         }
     } catch (err) {
-        console.log(err)
-        console.log(err.code, err.message);
-        //req.error(err.code, err.message);
+        //console.log(err)
+        //console.log(err.code, err.message);
+        req.error(err.code, err.message);
     }
 }
 
@@ -693,7 +693,6 @@ async function executeCreateCompany(req, externalCode, startDate) {
         req.error(err.code, err.message);
         //console.log(err)
         //console.log(err.code, err.message);
-        //console.log('erro create company')
     }
 }
 
@@ -869,9 +868,9 @@ async function executeCreateDivision(req, externalCode, startDate) {
             }
         }
     } catch (err) {
-        //req.error(err.code, err.message);
-        console.log(err)
-        console.log(err.code, err.message);
+        req.error(err.code, err.message);
+        //console.log(err)
+        //console.log(err.code, err.message);
     }
 }
 
@@ -1056,7 +1055,7 @@ async function executeCreateDepartment(req, externalCode, startDate) {
 //Update Departments
 async function executeUpdateDepartment(req, externalCode, startDate) {
     try {
-        const sfDepartment = await FoundationService.tx(req).run(SELECT.one.from('FOdepartment')
+        const sfDepartment = await FoundationService.tx(req).run(SELECT.one.from('FODepartment')
             .columns([
                 'externalCode',
                 "startDate",
@@ -1400,7 +1399,7 @@ async function executeUpdateJobCode(req, externalCode, startDate) {
                 "employeeClass",
                 "endDate",
                 "grade",
-                "ifFulltimeEmployee",
+                "isFulltimeEmployee",
                 "isRegular",
                 "jobFunction",
                 "jobLevel",

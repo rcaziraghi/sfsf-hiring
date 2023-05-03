@@ -79,12 +79,6 @@ module.exports = cds.service.impl(async function () {
     this.before('UPDATE', CostCenters, beforeUpdateCostCenters);
     this.before('DELETE', CostCenters, beforeDeleteCostCenters);
 
-    // this.before('PATCH', Requests, async req => {
-
-    //     console.log("before patch")
-
-    // });
-
     this.before('CREATE', Companies, beforeCreateCompanies);
     this.before('UPDATE', Companies, beforeUpdateCompanies);
     this.before('DELETE', Companies, beforeDeleteCompanies);
