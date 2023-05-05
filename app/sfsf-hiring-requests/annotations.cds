@@ -16,14 +16,14 @@ annotate service.Requests with @(UI: {
         {
             $Type : 'UI.DataFieldForAction',
             Action: 'deloitte.hiring.service.CatalogService.sendRequestForApproval',
-            Label : 'Enviar para aprovação'
+            Label : '{@i18n>sendForApproval}'
         },
         {Value: title}
     ],
     HeaderInfo                       : {
         $Type         : 'UI.HeaderInfoType',
-        TypeName      : 'Solicitação',
-        TypeNamePlural: 'Solicitações',
+        TypeName      : '{@i18n>Solicitacao}',
+        TypeNamePlural: '{@i18n>Solicitacoes}',
         Title         : {
             $Type: 'UI.DataField',
             Value: title
@@ -82,30 +82,30 @@ annotate service.Requests with @(UI: {
             $Type : 'UI.ReferenceFacet',
             ID    : 'RequestDetails',
             Target: '@UI.FieldGroup#RequestDetails',
-            Label : 'Detalhes'
+            Label : '{@i18n>Detalhes}'
         },
         {
             $Type : 'UI.ReferenceFacet',
             ID    : 'OrganizationalDetails',
             Target: '@UI.FieldGroup#OrganizationalDetails',
-            Label : 'Organização'
+            Label : '{@i18n>Organizacao}'
         },
         {
             $Type : 'UI.ReferenceFacet',
             ID    : 'BudgetDetails',
             Target: '@UI.FieldGroup#BudgetDetails',
-            Label : 'Budget'
+            Label : '{@i18n>Budget}'
         },
         {
             $Type : 'UI.ReferenceFacet',
             ID    : 'Comments',
             Target: '@UI.FieldGroup#Comments',
-            Label : 'Comentários'
+            Label : '{@i18n>Comentarios}'
         }
     ],
     DataPoint #title                 : {
         Value: title,
-        Title: 'Título da posição'
+        Title: '{@i18n>TituloPosicao}'
     },
     DataPoint #budgetCapProgress     : {
         Value        : budgetPer,
@@ -128,27 +128,27 @@ annotate service.Requests with @(UI: {
             {
                 $Type: 'UI.DataField',
                 Value: position_code,
-                Label: 'Posição template'
+                Label: '{@i18n>PosicaoTemplate}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: title,
-                Label: 'Título'
+                Label: '{@i18n>Titulo}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: jobCode_externalCode,
-                Label: 'Job code'
+                Label: '{@i18n>JobCode}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: description,
-                Label: 'Descrição'
+                Label: '{@i18n>Descricao}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: startingDate,
-                Label: 'Início'
+                Label: '{@i18n>Inicio}'
             }
         ]
     },
@@ -158,22 +158,22 @@ annotate service.Requests with @(UI: {
             {
                 $Type: 'UI.DataField',
                 Value: company_externalCode,
-                Label: 'Empresa'
+                Label: '{@i18n>Empresa}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: businessUnit_externalCode,
-                Label: 'Business Unit'
+                Label: '{@i18n>BusinessUnit}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: division_externalCode,
-                Label: 'Divisão'
+                Label: '{@i18n>Divisao}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: department_externalCode,
-                Label: 'Departamento'
+                Label: '{@i18n>Departamento}'
             },
         ]
     },
@@ -183,19 +183,19 @@ annotate service.Requests with @(UI: {
             {
                 $Type: 'UI.DataField',
                 Value: costCenter_externalCode,
-                Label: 'Centro de Custo'
+                Label: '{@i18n>CentroCusto}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: budget,
-                Label: 'Budget',
+                Label: '{@i18n>Budget}',
                 ![@Common.FieldControl] : #ReadOnly
 
             },
             {
                 $Type: 'UI.DataField',
                 Value: budgetCap,
-                Label: 'Budget Cap',
+                Label: '{@i18n>BudgetCap}',
                 ![@Common.FieldControl] : #ReadOnly
 
             }
@@ -206,26 +206,26 @@ annotate service.Requests with @(UI: {
         Data : [{
             $Type: 'UI.DataField',
             Value: comments,
-            Label: 'Comentários'
+            Label: '{@i18n>Comentarios}'
         }]
     },
 });
 
 annotate service.Requests with {
     ID           @(
-        title    : 'ID da Requisição',
+        title    : '{@i18n>IDRequisicao}',
         UI.Hidden: true
     )  @readonly;
-    title        @(title: 'Título da Posição');
+    title        @(title: '{@i18n>TituloPosicao}');
     comments     @(
-        title: 'Comentários',
+        title: '{@i18n>Comentarios}',
         UI.MultiLineText
     );
     startingDate    @(
         Common: {
             FieldControl: #Mandatory
         },
-        title: 'Início');
+        title: '{@i18n>Inicio}');
     status       @(
         Common: {
             Text                 : status.name,
@@ -234,7 +234,7 @@ annotate service.Requests with {
             FieldControl         : #ReadOnly,
             DefaultValuesFunction: '1',
         },
-        title : 'Status',
+        title : '{@i18n>Status}',
     );
     position     @(
         Common: {
@@ -260,10 +260,10 @@ annotate service.Requests with {
                         ValueListProperty: 'positionTitle'
                     }
                 ],
-                Label         : 'Posições'
+                Label         : '{@i18n>Posicoes}'
             }
         },
-        title : 'Posição'
+        title : '{@i18n>Posicao}'
     );
     jobCode     @(
         Common: {
@@ -289,10 +289,10 @@ annotate service.Requests with {
                         ValueListProperty: 'name_defaultValue'
                     }
                 ],
-                Label         : 'Job codes'
+                Label         : '{@i18n>JobCodes}'
             }
         },
-        title : 'Job code'
+        title : '{@i18n>JobCode}'
     );
     costCenter   @(
         Common: {
@@ -318,10 +318,10 @@ annotate service.Requests with {
                         ValueListProperty: 'description_defaultValue'
                     }
                 ],
-                Label         : 'Centros de custo'
+                Label         : '{@i18n>CentrosCusto}'
             }
         },
-        title : 'Centro de custo'
+        title : '{@i18n>CentroCusto}'
     );
     company      @(
         Common: {
@@ -351,10 +351,10 @@ annotate service.Requests with {
                         ValueListProperty: 'description_localized'
                     }
                 ],
-                Label         : 'Empresas'
+                Label         : '{@i18n>Empresas}'
             }
         },
-        title : 'Empresa'
+        title : '{@i18n>Empresa}'
     );
     businessUnit @(
         Common: {
@@ -384,10 +384,10 @@ annotate service.Requests with {
                         ValueListProperty: 'description_defaultValue'
                     }
                 ],
-                Label         : 'Business Units'
+                Label         : '{@i18n>BusinessUnits}'
             }
         },
-        title : 'Business Unit'
+        title : '{@i18n>BusinessUnit}'
     );
     division     @(
         Common: {
@@ -417,10 +417,10 @@ annotate service.Requests with {
                         ValueListProperty: 'description_defaultValue'
                     }
                 ],
-                Label         : 'Divisões'
+                Label         : '{@i18n>Divisoes}'
             }
         },
-        title : 'Divisão'
+        title : '{@i18n>Divisao}'
     );
     department   @(
         Common: {
@@ -450,24 +450,24 @@ annotate service.Requests with {
                         ValueListProperty: 'description_defaultValue'
                     }
                 ],
-                Label         : 'Departamentos'
+                Label         : '{@i18n>Departamentos}'
             }
         },
-        title : 'Departamento'
+        title : '{@i18n>Departamento}'
     );
     budget       @Measures.ISOCurrency: currency_code
-                 @Common              : {Label: 'Budget actual'
+                 @Common              : {Label: '{@i18n>BudgetActual}'
                                         //  ,FieldControl   : #ReadOnly
                                          };
     budgetCap    @Measures.ISOCurrency: currency_code
-                 @Common              : {Label: 'Budget Max'
+                 @Common              : {Label: '{@i18n>BudgetMax}'
                                         //  FieldControl   : #ReadOnly
                                          };
     budgetPer    @Measures.Unit       : '%'
-                 @Common              : {Label: 'Budget %',
+                 @Common              : {Label: '{@i18n>BudgetPer}',
                                          FieldControl   : #ReadOnly};
     budgetCriticality    @Measures.Unit       : '%'
-                 @Common              : {Label: 'Budget %',
+                 @Common              : {Label: '{@i18n>BudgetPer}',
                                          FieldControl   : #ReadOnly};
 }
 
@@ -482,8 +482,8 @@ annotate service.Status with {
     ID   @Common: {
         Text           : name,
         TextArrangement: #TextOnly
-    }  @title: 'ID de status';
-    name @title : 'Status'
+    }  @title: '{@i18n>IDStatus}';
+    name @title : '{@i18n>Status}'
 }
 
 annotate service.Status with @(UI: {
@@ -496,8 +496,8 @@ annotate service.Status with @(UI: {
     }],
     HeaderInfo         : {
         $Type         : 'UI.HeaderInfoType',
-        TypeName      : 'Status',
-        TypeNamePlural: 'Status',
+        TypeName      : '{@i18n>Status}',
+        TypeNamePlural: '{@i18n>Status}',
         Title         : {
             $Type: 'UI.DataField',
             Value: name
@@ -519,12 +519,12 @@ annotate service.Status with @(UI: {
         {
             $Type: 'UI.DataField',
             Value: descr,
-            Label: 'Descrição'
+            Label: '{@i18n>Descricao}'
         },
         {
             $Type: 'UI.DataField',
             Value: criticality,
-            Label: 'Criticalidade'
+            Label: '{@i18n>Criticalidade}'
         }
     ],
     HeaderFacets       : [{
@@ -535,12 +535,12 @@ annotate service.Status with @(UI: {
         $Type : 'UI.ReferenceFacet',
         ID    : 'StatusDetails',
         Target: '@UI.FieldGroup#Details',
-        Label : 'Detalhes'
+        Label : '{@i18n>Detalhes}'
     }],
     FieldGroup #Detail : {Data: [{
         $Type: 'UI.DataField',
         Value: name,
-        Label: 'Status'
+        Label: '{@i18n>Status}'
     }]},
     FieldGroup #Details: {
         $Type: 'UI.FieldGroupType',
@@ -548,17 +548,17 @@ annotate service.Status with @(UI: {
             {
                 $Type: 'UI.DataField',
                 Value: name,
-                Label: 'Nome'
+                Label: '{@i18n>Nome}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: descr,
-                Label: 'Descrição'
+                Label: '{@i18n>Descricao}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: criticality,
-                Label: 'Criticalidade'
+                Label: '{@i18n>Criticalidade}'
             }
         ]
     },
@@ -575,8 +575,8 @@ annotate service.Positions with {
     code          @Common: {
         Text           : positionTitle,
         TextArrangement: #TextOnly
-    }  @title: 'Posição';
-    positionTitle @title : 'Título'
+    }  @title: '{@i18n>Posicao}';
+    positionTitle @title : '{@i18n>Titulo}'
 }
 
 annotate service.Positions with @(UI: {
@@ -589,8 +589,8 @@ annotate service.Positions with @(UI: {
     }],
     HeaderInfo         : {
         $Type         : 'UI.HeaderInfoType',
-        TypeName      : 'Posição',
-        TypeNamePlural: 'Posições',
+        TypeName      : '{@i18n>Posicao',
+        TypeNamePlural: '{@i18n>Posicoes}',
         Title         : {
             $Type: 'UI.DataField',
             Value: positionTitle
@@ -612,17 +612,17 @@ annotate service.Positions with @(UI: {
         {
             $Type: 'UI.DataField',
             Value: effectiveStartDate,
-            Label: 'Data de início'
+            Label: '{@i18n>DataInicio}'
         },
         {
             $Type: 'UI.DataField',
             Value: positionTitle,
-            Label: 'Título'
+            Label: '{@i18n>Titulo}'
         },
         {
             $Type: 'UI.DataField',
             Value: externalName_defaultValue,
-            Label: 'Descrição'
+            Label: '{@i18n>Descricao}'
         }
     ],
     HeaderFacets       : [{
@@ -633,12 +633,12 @@ annotate service.Positions with @(UI: {
         $Type : 'UI.ReferenceFacet',
         ID    : 'StatusDetails',
         Target: '@UI.FieldGroup#Details',
-        Label : 'Detalhes'
+        Label : '{@i18n>Detalhes}'
     }],
     FieldGroup #Detail : {Data: [{
         $Type: 'UI.DataField',
         Value: positionTitle,
-        Label: 'Status'
+        Label: '{@i18n>Status}'
     }]},
     FieldGroup #Details: {
         $Type: 'UI.FieldGroupType',
@@ -646,17 +646,17 @@ annotate service.Positions with @(UI: {
             {
                 $Type: 'UI.DataField',
                 Value: positionTitle,
-                Label: 'Nome'
+                Label: '{@i18n>Nome}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: externalName_defaultValue,
-                Label: 'Descrição'
+                Label: '{@i18n>Descricao}'
             },
             {
                 $Type: 'UI.DataField',
                 Value: comment,
-                Label: 'Comentário'
+                Label: '{@i18n>Comentario}'
             }
         ]
     },
@@ -673,8 +673,8 @@ annotate service.CostCenters with {
     externalCode          @Common: {
         Text           : description_defaultValue,
         TextArrangement: #TextFirst
-    }  @title: 'Centro de custo';
-    description_defaultValue @title : 'Centro de custo'
+    }  @title: '{@i18n>CentroCusto}';
+    description_defaultValue @title : '{@i18n>CentroCusto}'
 }
 
 //////////////// SF_Companies
@@ -682,8 +682,8 @@ annotate service.SF_Companies with {
     externalCode          @Common: {
         Text           : description_defaultValue,
         TextArrangement: #TextFirst
-    }  @title: 'Empresa';
-    description_defaultValue @title : 'Empresa'
+    }  @title: '{@i18n>Empresa}';
+    description_defaultValue @title : '{@i18n>Empresa}'
 }
 
 //////////////// SF_BusinessUnits
@@ -691,8 +691,8 @@ annotate service.SF_BusinessUnits with {
     externalCode          @Common: {
         Text           : description_defaultValue,
         TextArrangement: #TextFirst
-    }  @title: 'Business Unit';
-    description_defaultValue @title : 'Business Unit'
+    }  @title: '{@i18n>BusinessUnit}';
+    description_defaultValue @title : '{@i18n>BusinessUnit}'
 }
 
 //////////////// SF_Divisions
@@ -700,8 +700,8 @@ annotate service.SF_Divisions with {
     externalCode          @Common: {
         Text           : description_defaultValue,
         TextArrangement: #TextFirst
-    }  @title: 'Divisão';
-    description_defaultValue @title : 'Divisão'
+    }  @title: '{@i18n>Divisao}';
+    description_defaultValue @title : '{@i18n>Divisao}'
 }
 
 //////////////// SF_Departments
@@ -709,8 +709,8 @@ annotate service.SF_Departments with {
     externalCode          @Common: {
         Text           : description_defaultValue,
         TextArrangement: #TextFirst
-    }  @title: 'Departamento';
-    description_defaultValue @title : 'Departamento'
+    }  @title: '{@i18n>Departamento}';
+    description_defaultValue @title : '{@i18n>Departamento}'
 }
 
 //////////////// SF_JobCodes
@@ -718,6 +718,6 @@ annotate service.SF_JobCodes with {
     externalCode          @Common: {
         Text           : name_defaultValue,
         TextArrangement: #TextFirst
-    }  @title: 'Job Code';
-    name_defaultValue @title : 'Job Code'
+    }  @title: '{@i18n>JobCode}';
+    name_defaultValue @title : '{@i18n>JobsCode}'
 }

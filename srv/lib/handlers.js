@@ -59,11 +59,8 @@ async function onSendRequestForApproval(req) {
 
         try {
             const response = await HiringRequestPAService.tx(req).post("/", {
-                approver: "gregor@computerservice-wolf.com",
-                subject: `Approval for ${req.changedEntity} requested`,
-                url: `${uiUrl}/fiori-ui5-1.71.html#Approvals-manage&//Approval(ID=guid'${req.ID}',IsActiveEntity=true)`,
-                body: "Please decide about this request",
-                ID: `guid'${req.ID}'`,
+                
+                
             });
         } catch (error) {
             console.error("Error Message: " + error.message);

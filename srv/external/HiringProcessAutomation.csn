@@ -1,6 +1,6 @@
 {
   "definitions": {
-    "TODO.service": {
+    "HiringProcessAutomation": {
       "kind": "service",
       "@Capabilities.BatchSupported": false,
       "@Capabilities.KeyAsSegmentSupported": true
