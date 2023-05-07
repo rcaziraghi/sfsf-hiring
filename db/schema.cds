@@ -28,9 +28,9 @@ entity Requests : cuid {
     comments       : localized String;
     PAUUID         : UUID;
     PAStatus       : String;
-    PAStartedAt    : DateTime;
+    PAStartedAt    : Timestamp;
     PAStartedBy    : String;
-    PACompletedAt  : DateTime;
+    PACompletedAt  : Timestamp;
 }
 
 @readonly

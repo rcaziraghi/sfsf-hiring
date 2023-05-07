@@ -58,6 +58,38 @@ async function onSendRequestForApproval(req) {
     try {
 
         const requisition = await cds.tx(req).run(SELECT.one.from(namespace + 'Requests')
+            .columns(
+                ((col) => {
+                    col('*'),
+                        col.status((status) => {
+                            status('*')
+                        }),
+                        col.position((position) => {
+                            position('*')
+                        }),
+                        col.parentPosition((parentPosition) => {
+                            parentPosition('*')
+                        }),
+                        col.jobCode((jobCode) => {
+                            jobCode('*')
+                        }),
+                        col.costCenter((costCenter) => {
+                            costCenter('*')
+                        }),
+                        col.company((company) => {
+                            company('*')
+                        }),
+                        col.businessUnit((businessUnit) => {
+                            businessUnit('*')
+                        }),
+                        col.division((division) => {
+                            division('*')
+                        }),
+                        col.department((department) => {
+                            department('*')
+                        })
+                })
+            )
             .where({
                 ID: {
                     '=': req.params[0].ID
@@ -67,59 +99,117 @@ async function onSendRequestForApproval(req) {
 
         if (requisition) {
 
-            let context = {
-                "ID": requisition.id,
-                "title": requisition.title,
-                "description": requisition.description || "",
-                "status_id": requisition.status_ID,
-                "position_code": requisition.position_code,
-                "position_effectiveStartDate": requisition.position_effectiveStartDate,
-                "parentPosition_code": requisition.parentPosition_code || "",
-                "parentPosition_effectiveStartDate": requisition.parentPosition_effectiveStartDate || "",
-                "jobCode_externalCode": requisition.jobCode_externalCode,
-                "jobCode_startDate": requisition.jobCode_startDate,
-                "costCenter_externalCode": requisition.costCenter_externalCode,
-                "costCenter_startDate": requisition.costCenter_startDate,
-                "company_externalCode": requisition.company_externalCode,
-                "company_startDate": requisition.company_startDate,
-                "businessUnit_externalCode": requisition.businessUnit_externalCode,
-                "businessUnit_startDate": requisition.businessUnit_startDate,
-                "division_externalCode": requisition.division_externalCode,
-                "division_startDate": requisition.division_startDate,
-                "department_externalCode": requisition.department_externalCode,
-                "department_startDate": requisition.department_startDate,
-                "startDate": requisition.startDate,
-                "budgetCap": requisition.budgetCap,
-                "budget": requisition.budget,
-                "currency": requisition.currency_code,
-                "comments": requisition.comments,
-                "budgetPer": requisition.budgetPer,
-                "status_text": requisition.status.name,
-                "position_text": requisition.position.positionTitle || requisition.position_code,
-                "parentPosition_text": requisition.parentPosition.positionTitle || requisition.parentPosition_code,
-                "jobCode_text": requisition.jobCode.name_defaultValue || requisition.jobCode_externalCode,
-                "costCenter_text": requisition.costCenter.description_defaultValue || requisition.costCenter_externalCode,
-                "company_text": requisition.company.description_defaultValue || requisition.company_externalCode,
-                "businessUnit_text": requisition.businessUnit.description_defaultValue || requisition.businessUnit_externalCode,
-                "division_text": requisition.division.description_defaultValue || requisition.division_externalCode,
-                "department_text": requisition.department.description_defaultValue || requisition.department_externalCode
-            }
+            //console.log(requisition);
 
-            console.log(context);
+            // let body = {
+            //     "definitionId": "us10.mtserver18yk2a98.hiringrequestapproval.hiringRequestProcess",
+            //     "context": {
+            //         "request": {
+            //             "ID": requisition.ID,
+            //             "title": requisition.title,
+            //             "description": requisition.description || "",
+            //             "status_id": requisition.status.name,
+            //             "position_code": requisition.position_code,
+            //             "position_effectiveStartDate": requisition.position_effectiveStartDate,
+            //             "parentPosition_code": requisition.parentPosition_code || "",
+            //             "parentPosition_effectiveStartDate": requisition.parentPosition_effectiveStartDate || "",
+            //             "jobCode_externalCode": requisition.jobCode_externalCode,
+            //             "jobCode_startDate": requisition.jobCode_startDate,
+            //             "costCenter_externalCode": requisition.costCenter_externalCode,
+            //             "costCenter_startDate": requisition.costCenter_startDate,
+            //             "company_externalCode": requisition.company_externalCode,
+            //             "company_startDate": requisition.company_startDate,
+            //             "businessUnit_externalCode": requisition.businessUnit_externalCode,
+            //             "businessUnit_startDate": requisition.businessUnit_startDate,
+            //             "division_externalCode": requisition.division_externalCode,
+            //             "division_startDate": requisition.division_startDate,
+            //             "department_externalCode": requisition.department_externalCode,
+            //             "department_startDate": requisition.department_startDate,
+            //             "startDate": requisition.startingDate,
+            //             "budgetCap": parseInt(requisition.budgetCap, 10),
+            //             "budget": parseInt(requisition.budget, 10),
+            //             "currency": requisition.currency_code,
+            //             "comments": requisition.comments,
+            //             "budgetPer": Math.abs((requisition.budget / requisition.budgetCap) * 100),
+            //             "status_text": requisition.status.name,
+            //             "position_text": requisition.position.positionTitle || requisition.position_code,
+            //             "parentPosition_text": requisition?.parentPosition?.positionTitle || requisition?.parentPosition_code || "",
+            //             "jobCode_text": requisition.jobCode.name_defaultValue || requisition.jobCode_externalCode,
+            //             "costCenter_text": requisition.costCenter.description_defaultValue || requisition.costCenter_externalCode,
+            //             "company_text": requisition.company.description_defaultValue || requisition.company_externalCode,
+            //             "businessUnit_text": requisition.businessUnit.description_defaultValue || requisition.businessUnit_externalCode,
+            //             "division_text": requisition.division.description_defaultValue || requisition.division_externalCode,
+            //             "department_text": requisition.department.description_defaultValue || requisition.department_externalCode
+            //         }
+            //     }
+            // };
+
+            // console.log("body", body);
+
+            // let request = {
+            //     method: 'POST',
+            //     path: '/',
+            //     body: JSON.stringify(body),
+            //     headers: {
+            //         "Content-Type": "application/json"
+            //     }
+            // };
+
+            // console.log("request", request)
 
             const response = await HiringRequestPAService.tx(req).post("/", {
                 "definitionId": "us10.mtserver18yk2a98.hiringrequestapproval.hiringRequestProcess",
-                "context": JSON.stringify(context)
+                "context": {
+                    "request": {
+                        "ID": requisition.ID,
+                        "title": requisition.title,
+                        "description": requisition.description || "",
+                        "status_id": requisition.status.name,
+                        "position_code": requisition.position_code,
+                        "position_effectiveStartDate": requisition.position_effectiveStartDate,
+                        "parentPosition_code": requisition.parentPosition_code || "",
+                        "parentPosition_effectiveStartDate": requisition.parentPosition_effectiveStartDate || "",
+                        "jobCode_externalCode": requisition.jobCode_externalCode,
+                        "jobCode_startDate": requisition.jobCode_startDate,
+                        "costCenter_externalCode": requisition.costCenter_externalCode,
+                        "costCenter_startDate": requisition.costCenter_startDate,
+                        "company_externalCode": requisition.company_externalCode,
+                        "company_startDate": requisition.company_startDate,
+                        "businessUnit_externalCode": requisition.businessUnit_externalCode,
+                        "businessUnit_startDate": requisition.businessUnit_startDate,
+                        "division_externalCode": requisition.division_externalCode,
+                        "division_startDate": requisition.division_startDate,
+                        "department_externalCode": requisition.department_externalCode,
+                        "department_startDate": requisition.department_startDate,
+                        "startDate": requisition.startingDate,
+                        "budgetCap": parseInt(requisition.budgetCap, 10),
+                        "budget": parseInt(requisition.budget, 10),
+                        "currency": requisition.currency_code,
+                        "comments": requisition.comments,
+                        "budgetPer": Math.abs((requisition.budget / requisition.budgetCap) * 100),
+                        "status_text": requisition.status.name,
+                        "position_text": requisition.position.positionTitle || requisition.position_code,
+                        "parentPosition_text": requisition?.parentPosition?.positionTitle || requisition?.parentPosition_code || "",
+                        "jobCode_text": requisition.jobCode.name_defaultValue || requisition.jobCode_externalCode,
+                        "costCenter_text": requisition.costCenter.description_defaultValue || requisition.costCenter_externalCode,
+                        "company_text": requisition.company.description_defaultValue || requisition.company_externalCode,
+                        "businessUnit_text": requisition.businessUnit.description_defaultValue || requisition.businessUnit_externalCode,
+                        "division_text": requisition.division.description_defaultValue || requisition.division_externalCode,
+                        "department_text": requisition.department.description_defaultValue || requisition.department_externalCode
+                    }
+                }
             });
 
-            console.log(response);
+            // const response = await HiringRequestPAService.send(request);
+
+            console.log("response", response);
 
             if (response.status == 'RUNNING' || response.status == 'STARTING') {
                 await UPDATE(req._target).with({
                     //status_ID: 3,
                     PAUUID: response.id,
                     PAStatus: response.status,
-                    PAStartedAt: response.statedAt,
+                    PAStartedAt: response.startedAt,
                     PAStartedBy: response.startedBy,
                     PACompletedAt: response.completedAt
                 });
@@ -146,7 +236,7 @@ async function onSendRequestForApproval(req) {
 
     } catch (err) {
         //req.error(err.code, err.message);
-        console.log(err)
+        //console.log(err)
         console.log(err.code)
         console.log(err.message)
         req.error({

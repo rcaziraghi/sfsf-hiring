@@ -104,6 +104,12 @@ annotate service.Requests with @(UI: {
             ID    : 'Comments',
             Target: '@UI.FieldGroup#Comments',
             Label : '{@i18n>Comentarios}'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            ID    : 'ProcessAutomation',
+            Target: '@UI.FieldGroup#PA',
+            Label : '{@i18n>ProcessAutomation}'
         }
     ],
     DataPoint #title                 : {
@@ -210,6 +216,30 @@ annotate service.Requests with @(UI: {
             $Type: 'UI.DataField',
             Value: comments,
             Label: '{@i18n>Comentarios}'
+        }]
+    },
+    FieldGroup #PA             : {
+        $Type: 'UI.FieldGroupType',
+        Data : [
+        //     {
+        //     $Type: 'UI.DataField',
+        //     Value: PAUUID,
+        //     Label: '{@i18n>PAUUID}'
+        // },
+        {
+            $Type: 'UI.DataField',
+            Value: PAStatus,
+            Label: '{@i18n>PAStatus}'
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: PAStartedAt,
+            Label: '{@i18n>PAStartedAt}'
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: PACompletedAt,
+            Label: '{@i18n>PACompletedAt}'
         }]
     },
 });
