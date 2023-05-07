@@ -39,34 +39,37 @@ annotate service.Requests with @(UI: {
         status.name,
         budgetPer
     ],
-    LineItem                         : [
-        {
-            $Type: 'UI.DataField',
-            Value: title
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: startingDate
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: budgetPer
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: budget
-        },
-        {
-            $Type: 'UI.DataField',
-            Value: budgetCap
-        },
-        {
-            $Type            : 'UI.DataField',
-            Value            : status.name,
-            Criticality      : status.criticality,
-            ![@UI.Importance]: #High
-        }
-    ],
+    LineItem                         : {
+        $value            : [
+            {
+                $Type: 'UI.DataField',
+                Value: title
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: startingDate
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: budgetPer
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: budget
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: budgetCap
+            },
+            {
+                $Type            : 'UI.DataField',
+                Value            : status.name,
+                Criticality      : status.criticality,
+                ![@UI.Importance]: #High
+            }
+        ],
+        ![@UI.Criticality]: status.criticality,
+    },
     HeaderFacets                     : [
         {
             $Type : 'UI.ReferenceFacet',
@@ -74,7 +77,7 @@ annotate service.Requests with @(UI: {
         },
         {
             $Type : 'UI.ReferenceFacet',
-            Target: '@UI.DataPoint#budgetCapProgress',
+            Target: '@UI.DataPoint#budgetCapProgress'
         }
     ],
     Facets                           : [
@@ -186,17 +189,17 @@ annotate service.Requests with @(UI: {
                 Label: '{@i18n>CentroCusto}'
             },
             {
-                $Type: 'UI.DataField',
-                Value: budget,
-                Label: '{@i18n>Budget}',
-                ![@Common.FieldControl] : #ReadOnly
+                $Type                  : 'UI.DataField',
+                Value                  : budget,
+                Label                  : '{@i18n>Budget}',
+                ![@Common.FieldControl]: #ReadOnly
 
             },
             {
-                $Type: 'UI.DataField',
-                Value: budgetCap,
-                Label: '{@i18n>BudgetCap}',
-                ![@Common.FieldControl] : #ReadOnly
+                $Type                  : 'UI.DataField',
+                Value                  : budgetCap,
+                Label                  : '{@i18n>BudgetCap}',
+                ![@Common.FieldControl]: #ReadOnly
 
             }
         ]
@@ -212,21 +215,20 @@ annotate service.Requests with @(UI: {
 });
 
 annotate service.Requests with {
-    ID           @(
+    ID                @(
         title    : '{@i18n>IDRequisicao}',
         UI.Hidden: true
     )  @readonly;
-    title        @(title: '{@i18n>TituloPosicao}');
-    comments     @(
+    title             @(title: '{@i18n>TituloPosicao}');
+    comments          @(
         title: '{@i18n>Comentarios}',
         UI.MultiLineText
     );
-    startingDate    @(
-        Common: {
-            FieldControl: #Mandatory
-        },
-        title: '{@i18n>Inicio}');
-    status       @(
+    startingDate      @(
+        Common: {FieldControl: #Mandatory},
+        title : '{@i18n>Inicio}'
+    );
+    status            @(
         Common: {
             Text                 : status.name,
             TextArrangement      : #TextOnly,
@@ -236,7 +238,7 @@ annotate service.Requests with {
         },
         title : '{@i18n>Status}',
     );
-    position     @(
+    position          @(
         Common: {
             Text           : position.positionTitle,
             TextArrangement: #TextFirst,
@@ -265,7 +267,7 @@ annotate service.Requests with {
         },
         title : '{@i18n>Posicao}'
     );
-    jobCode     @(
+    jobCode           @(
         Common: {
             Text           : jobCode.name_defaultValue,
             TextArrangement: #TextFirst,
@@ -294,7 +296,7 @@ annotate service.Requests with {
         },
         title : '{@i18n>JobCode}'
     );
-    costCenter   @(
+    costCenter        @(
         Common: {
             Text           : costCenter.description,
             TextArrangement: #TextFirst,
@@ -323,7 +325,7 @@ annotate service.Requests with {
         },
         title : '{@i18n>CentroCusto}'
     );
-    company      @(
+    company           @(
         Common: {
             Text           : company.name_defaultValue,
             TextArrangement: #TextFirst,
@@ -356,7 +358,7 @@ annotate service.Requests with {
         },
         title : '{@i18n>Empresa}'
     );
-    businessUnit @(
+    businessUnit      @(
         Common: {
             Text           : businessUnit.name_defaultValue,
             TextArrangement: #TextFirst,
@@ -389,7 +391,7 @@ annotate service.Requests with {
         },
         title : '{@i18n>BusinessUnit}'
     );
-    division     @(
+    division          @(
         Common: {
             Text           : division.name_defaultValue,
             TextArrangement: #TextFirst,
@@ -422,7 +424,7 @@ annotate service.Requests with {
         },
         title : '{@i18n>Divisao}'
     );
-    department   @(
+    department        @(
         Common: {
             Text           : department.name_defaultValue,
             TextArrangement: #TextFirst,
@@ -455,20 +457,24 @@ annotate service.Requests with {
         },
         title : '{@i18n>Departamento}'
     );
-    budget       @Measures.ISOCurrency: currency_code
-                 @Common              : {Label: '{@i18n>BudgetActual}'
-                                        //  ,FieldControl   : #ReadOnly
-                                         };
-    budgetCap    @Measures.ISOCurrency: currency_code
-                 @Common              : {Label: '{@i18n>BudgetMax}'
-                                        //  FieldControl   : #ReadOnly
-                                         };
-    budgetPer    @Measures.Unit       : '%'
-                 @Common              : {Label: '{@i18n>BudgetPer}',
-                                         FieldControl   : #ReadOnly};
-    budgetCriticality    @Measures.Unit       : '%'
-                 @Common              : {Label: '{@i18n>BudgetPer}',
-                                         FieldControl   : #ReadOnly};
+    budget            @Measures.ISOCurrency: currency_code
+                      @Common              : {Label: '{@i18n>BudgetActual}'
+                                                                           //  ,FieldControl   : #ReadOnly
+                                                     };
+    budgetCap         @Measures.ISOCurrency: currency_code
+                      @Common              : {Label: '{@i18n>BudgetMax}'
+                                                                        //  FieldControl   : #ReadOnly
+                                                     };
+    budgetPer         @Measures.Unit       : '%'
+                      @Common              : {
+        Label       : '{@i18n>BudgetPer}',
+        FieldControl: #ReadOnly
+    };
+    budgetCriticality @Measures.Unit       : '%'
+                      @Common              : {
+        Label       : '{@i18n>BudgetPer}',
+        FieldControl: #ReadOnly
+    };
 }
 
 annotate service.Requests @(Capabilities: {
@@ -670,7 +676,7 @@ annotate service.Positions @(Capabilities: {
 
 //////////////// costCenter
 annotate service.CostCenters with {
-    externalCode          @Common: {
+    externalCode             @Common: {
         Text           : description_defaultValue,
         TextArrangement: #TextFirst
     }  @title: '{@i18n>CentroCusto}';
@@ -679,7 +685,7 @@ annotate service.CostCenters with {
 
 //////////////// SF_Companies
 annotate service.SF_Companies with {
-    externalCode          @Common: {
+    externalCode             @Common: {
         Text           : description_defaultValue,
         TextArrangement: #TextFirst
     }  @title: '{@i18n>Empresa}';
@@ -688,7 +694,7 @@ annotate service.SF_Companies with {
 
 //////////////// SF_BusinessUnits
 annotate service.SF_BusinessUnits with {
-    externalCode          @Common: {
+    externalCode             @Common: {
         Text           : description_defaultValue,
         TextArrangement: #TextFirst
     }  @title: '{@i18n>BusinessUnit}';
@@ -697,7 +703,7 @@ annotate service.SF_BusinessUnits with {
 
 //////////////// SF_Divisions
 annotate service.SF_Divisions with {
-    externalCode          @Common: {
+    externalCode             @Common: {
         Text           : description_defaultValue,
         TextArrangement: #TextFirst
     }  @title: '{@i18n>Divisao}';
@@ -706,7 +712,7 @@ annotate service.SF_Divisions with {
 
 //////////////// SF_Departments
 annotate service.SF_Departments with {
-    externalCode          @Common: {
+    externalCode             @Common: {
         Text           : description_defaultValue,
         TextArrangement: #TextFirst
     }  @title: '{@i18n>Departamento}';
@@ -715,7 +721,7 @@ annotate service.SF_Departments with {
 
 //////////////// SF_JobCodes
 annotate service.SF_JobCodes with {
-    externalCode          @Common: {
+    externalCode      @Common: {
         Text           : name_defaultValue,
         TextArrangement: #TextFirst
     }  @title: '{@i18n>JobCode}';

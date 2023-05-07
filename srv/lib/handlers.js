@@ -57,20 +57,102 @@ async function readSF_Entities(req) {
 async function onSendRequestForApproval(req) {
     try {
 
-        try {
-            const response = await HiringRequestPAService.tx(req).post("/", {
-                
-                
-            });
-        } catch (error) {
-            console.error("Error Message: " + error.message);
-        };
+        const requisition = await cds.tx(req).run(SELECT.one.from(namespace + 'Requests')
+            .where({
+                ID: {
+                    '=': req.params[0].ID
+                }
+            })
+        );
 
-        // await UPDATE(req._target).with({
-        //     status_ID: 3
-        // });
+        if (requisition) {
+
+            let context = {
+                "ID": requisition.id,
+                "title": requisition.title,
+                "description": requisition.description || "",
+                "status_id": requisition.status_ID,
+                "position_code": requisition.position_code,
+                "position_effectiveStartDate": requisition.position_effectiveStartDate,
+                "parentPosition_code": requisition.parentPosition_code || "",
+                "parentPosition_effectiveStartDate": requisition.parentPosition_effectiveStartDate || "",
+                "jobCode_externalCode": requisition.jobCode_externalCode,
+                "jobCode_startDate": requisition.jobCode_startDate,
+                "costCenter_externalCode": requisition.costCenter_externalCode,
+                "costCenter_startDate": requisition.costCenter_startDate,
+                "company_externalCode": requisition.company_externalCode,
+                "company_startDate": requisition.company_startDate,
+                "businessUnit_externalCode": requisition.businessUnit_externalCode,
+                "businessUnit_startDate": requisition.businessUnit_startDate,
+                "division_externalCode": requisition.division_externalCode,
+                "division_startDate": requisition.division_startDate,
+                "department_externalCode": requisition.department_externalCode,
+                "department_startDate": requisition.department_startDate,
+                "startDate": requisition.startDate,
+                "budgetCap": requisition.budgetCap,
+                "budget": requisition.budget,
+                "currency": requisition.currency_code,
+                "comments": requisition.comments,
+                "budgetPer": requisition.budgetPer,
+                "status_text": requisition.status.name,
+                "position_text": requisition.position.positionTitle || requisition.position_code,
+                "parentPosition_text": requisition.parentPosition.positionTitle || requisition.parentPosition_code,
+                "jobCode_text": requisition.jobCode.name_defaultValue || requisition.jobCode_externalCode,
+                "costCenter_text": requisition.costCenter.description_defaultValue || requisition.costCenter_externalCode,
+                "company_text": requisition.company.description_defaultValue || requisition.company_externalCode,
+                "businessUnit_text": requisition.businessUnit.description_defaultValue || requisition.businessUnit_externalCode,
+                "division_text": requisition.division.description_defaultValue || requisition.division_externalCode,
+                "department_text": requisition.department.description_defaultValue || requisition.department_externalCode
+            }
+
+            console.log(context);
+
+            const response = await HiringRequestPAService.tx(req).post("/", {
+                "definitionId": "us10.mtserver18yk2a98.hiringrequestapproval.hiringRequestProcess",
+                "context": JSON.stringify(context)
+            });
+
+            console.log(response);
+
+            if (response.status == 'RUNNING' || response.status == 'STARTING') {
+                await UPDATE(req._target).with({
+                    //status_ID: 3,
+                    PAUUID: response.id,
+                    PAStatus: response.status,
+                    PAStartedAt: response.statedAt,
+                    PAStartedBy: response.startedBy,
+                    PACompletedAt: response.completedAt
+                });
+                req.info({
+                    code: 'PAI01',
+                    message: 'Enviado para processamento'
+                })
+
+            } else {
+                req.warn({
+                    code: 'PAW01',
+                    message: 'Warning ao enviar para PA',
+                    status: 418
+                })
+            }
+
+        } else {
+            req.warn({
+                code: 'PAW01',
+                message: 'Warning ao enviar para PA (requisition não encontrada)',
+                status: 418
+            })
+        }
+
     } catch (err) {
-        req.error(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code)
+        console.log(err.message)
+        req.error({
+            code: 'PAE01',
+            message: 'Erro ao enviar para PA',
+        })
     }
 }
 

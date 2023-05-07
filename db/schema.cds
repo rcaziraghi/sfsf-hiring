@@ -26,6 +26,11 @@ entity Requests : cuid {
     budget         : Decimal default 0.00;
     currency       : Currency;
     comments       : localized String;
+    PAUUID         : UUID;
+    PAStatus       : String;
+    PAStartedAt    : DateTime;
+    PAStartedBy    : String;
+    PACompletedAt  : DateTime;
 }
 
 @readonly

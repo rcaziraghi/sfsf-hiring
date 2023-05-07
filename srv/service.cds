@@ -18,7 +18,7 @@ service CatalogService @(
       createdBy,
       modifiedBy
     } actions {
-      action sendRequestForApproval()
+        action sendRequestForApproval()
     };
 
   entity Status                         as projection on my.Status;
@@ -71,6 +71,4 @@ service CatalogService @(
   entity SF_Departments                 as projection on my.SF_Departments;
 
   annotate SF_Departments with @(requires: 'Admin');
-
-
 }

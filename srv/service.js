@@ -55,7 +55,7 @@ module.exports = cds.service.impl(async function () {
 
     /*** HANDLERS REGISTRATION ***/
     // Actions
-    this.on('sendRequestForApproval', onSendRequestForApproval);
+    this.on('sendRequestForApproval', Requests, onSendRequestForApproval);
 
     // ON events
     this.on('READ', SF_Positions, readSF_Entities);

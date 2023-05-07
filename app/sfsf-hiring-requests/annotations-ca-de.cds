@@ -10,6 +10,7 @@ annotate service.Requests with actions {
             1
         ]}},
         Common.SideEffects.TargetProperties: ['in/status_ID'],
+        Common.IsActionCritical : true,
     )
 };
 

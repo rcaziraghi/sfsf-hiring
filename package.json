@@ -104,7 +104,9 @@
         "kind": "rest",
         "model": "srv/external/HiringProcessAutomation",
         "credentials": {
-          "destination": "ProcessAutomation_API"
+          "destination": "sap_process_automation_api",
+          "path": "/workflow/rest/v1/workflow-instances",
+          "forwardAuthToken": true 
         }
       }
     }
