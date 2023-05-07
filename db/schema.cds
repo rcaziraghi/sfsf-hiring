@@ -6,6 +6,7 @@ using {
 } from '@sap/cds/common';
 using ECPositionManagement as PosMan_API from '../srv/external/ECPositionManagement.csn';
 using ECFoundationOrganization as Foundation_API from '../srv/external/ECFoundationOrganization.csn';
+using HiringProcessAutomation as ProcessAutomation from '../srv/external/HiringProcessAutomation';
 
 namespace deloitte.hiring.db;
 
@@ -26,6 +27,7 @@ entity Requests : cuid {
     budget         : Decimal default 0.00;
     currency       : Currency;
     comments       : localized String;
+    PAHidden      : Boolean default true;
     PAUUID         : UUID;
     PAStatus       : String;
     PAStartedAt    : Timestamp;
@@ -390,3 +392,23 @@ entity SF_JobCodes                    as
             supervisorLevel,
             workerCompCode
     };
+
+// @readonly
+// @cds.autoexpose
+// entity ProcessAutomations                    as
+//     select from ProcessAutomation {
+//         key id,
+//     definitionId,
+//     definitionVersion,
+//     subject,
+//     status,
+//     businessKey,
+//     parentInstanceId,
+//     rootInstanceId,
+//     applicationScope,
+//     projectId,
+//     projectVersion,
+//     startedAt,
+//     startedBy,
+//     completedAt
+// }

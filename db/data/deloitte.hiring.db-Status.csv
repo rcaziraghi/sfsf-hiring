@@ -3,4 +3,5 @@ ID;name;descr;criticality
 2;Em progresso;Atividade em progresso;2
 3;Enviado;Atividade atrasada;2
 4;Reprovado;Atividade bloqueada;1
+5;Cancelado;Atividade cancelada;0
 7;Aprovado;Atividade completada;3

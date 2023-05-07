@@ -109,7 +109,8 @@ annotate service.Requests with @(UI: {
             $Type : 'UI.ReferenceFacet',
             ID    : 'ProcessAutomation',
             Target: '@UI.FieldGroup#PA',
-            Label : '{@i18n>ProcessAutomation}'
+            Label : '{@i18n>ProcessAutomation}',
+            ![@UI.Hidden]: PAHidden
         }
     ],
     DataPoint #title                 : {
@@ -240,7 +241,8 @@ annotate service.Requests with @(UI: {
             $Type: 'UI.DataField',
             Value: PACompletedAt,
             Label: '{@i18n>PACompletedAt}'
-        }]
+        }],
+        ![@UI.Hidden]: PAHidden
     },
 });
 

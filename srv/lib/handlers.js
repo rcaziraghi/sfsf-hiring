@@ -47,12 +47,67 @@ async function readSF_Entities(req) {
         const tx = FoundationService.tx(req);
         return await tx.run(req.query);
     } catch (err) {
-        req.error(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+    }
+}
+
+// Read Process Automations
+async function readHiringRequestPAService(req) {
+    try {
+        const tx = HiringRequestPAService.tx(req);
+        return await tx.run(req.query);
+    } catch (err) {
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////
 ///Requests
+async function updatePAData(Request, req) {
+    try {
+        const requisition = await cds.tx(req).run(SELECT.one.from(namespace + 'Requests')
+            .columns(['status_ID', 'PAHidden', 'PAUUID'])
+            .where({
+                ID: {
+                    '=': Request.ID
+                }
+            })
+        )
+
+            if (requisition.PAUUID && requisition.status_ID < 4 ) {
+
+                const response = await HiringRequestPAService.tx(req).get("/" + requisition.PAUUID);
+
+                if(response.id) {
+                    Request.PAHidden = false,
+                    Request.PAStatus = response.status,
+                    Request.PACompletedAt = response.completedAt,
+                    Request.status_ID = response.status == 'RUNNING' ? 2 : response.status == 'CANCELED' ? 5 : 7;
+
+                    await cds.tx(req).run(UPDATE.entity(namespaceCatalogService + 'Requests', Request.ID)
+                                .with({ PAHidden: Request.PAHidden,
+                                        PAStatus: Request.PAStatus,
+                                        PACompletedAt: Request.PACompletedAt,
+                                        status_ID: Request.status_ID
+                                }));
+                }
+
+            }
+
+        return Request;
+
+    } catch (err) {
+        //req.error(err.code, err.message);
+        console.log(err.code)
+        console.log(err.message)
+    }
+
+}
+
 //Actions
 async function onSendRequestForApproval(req) {
     try {
@@ -99,64 +154,6 @@ async function onSendRequestForApproval(req) {
 
         if (requisition) {
 
-            //console.log(requisition);
-
-            // let body = {
-            //     "definitionId": "us10.mtserver18yk2a98.hiringrequestapproval.hiringRequestProcess",
-            //     "context": {
-            //         "request": {
-            //             "ID": requisition.ID,
-            //             "title": requisition.title,
-            //             "description": requisition.description || "",
-            //             "status_id": requisition.status.name,
-            //             "position_code": requisition.position_code,
-            //             "position_effectiveStartDate": requisition.position_effectiveStartDate,
-            //             "parentPosition_code": requisition.parentPosition_code || "",
-            //             "parentPosition_effectiveStartDate": requisition.parentPosition_effectiveStartDate || "",
-            //             "jobCode_externalCode": requisition.jobCode_externalCode,
-            //             "jobCode_startDate": requisition.jobCode_startDate,
-            //             "costCenter_externalCode": requisition.costCenter_externalCode,
-            //             "costCenter_startDate": requisition.costCenter_startDate,
-            //             "company_externalCode": requisition.company_externalCode,
-            //             "company_startDate": requisition.company_startDate,
-            //             "businessUnit_externalCode": requisition.businessUnit_externalCode,
-            //             "businessUnit_startDate": requisition.businessUnit_startDate,
-            //             "division_externalCode": requisition.division_externalCode,
-            //             "division_startDate": requisition.division_startDate,
-            //             "department_externalCode": requisition.department_externalCode,
-            //             "department_startDate": requisition.department_startDate,
-            //             "startDate": requisition.startingDate,
-            //             "budgetCap": parseInt(requisition.budgetCap, 10),
-            //             "budget": parseInt(requisition.budget, 10),
-            //             "currency": requisition.currency_code,
-            //             "comments": requisition.comments,
-            //             "budgetPer": Math.abs((requisition.budget / requisition.budgetCap) * 100),
-            //             "status_text": requisition.status.name,
-            //             "position_text": requisition.position.positionTitle || requisition.position_code,
-            //             "parentPosition_text": requisition?.parentPosition?.positionTitle || requisition?.parentPosition_code || "",
-            //             "jobCode_text": requisition.jobCode.name_defaultValue || requisition.jobCode_externalCode,
-            //             "costCenter_text": requisition.costCenter.description_defaultValue || requisition.costCenter_externalCode,
-            //             "company_text": requisition.company.description_defaultValue || requisition.company_externalCode,
-            //             "businessUnit_text": requisition.businessUnit.description_defaultValue || requisition.businessUnit_externalCode,
-            //             "division_text": requisition.division.description_defaultValue || requisition.division_externalCode,
-            //             "department_text": requisition.department.description_defaultValue || requisition.department_externalCode
-            //         }
-            //     }
-            // };
-
-            // console.log("body", body);
-
-            // let request = {
-            //     method: 'POST',
-            //     path: '/',
-            //     body: JSON.stringify(body),
-            //     headers: {
-            //         "Content-Type": "application/json"
-            //     }
-            // };
-
-            // console.log("request", request)
-
             const response = await HiringRequestPAService.tx(req).post("/", {
                 "definitionId": "us10.mtserver18yk2a98.hiringrequestapproval.hiringRequestProcess",
                 "context": {
@@ -182,10 +179,10 @@ async function onSendRequestForApproval(req) {
                         "department_externalCode": requisition.department_externalCode,
                         "department_startDate": requisition.department_startDate,
                         "startDate": requisition.startingDate,
-                        "budgetCap": parseInt(requisition.budgetCap, 10),
-                        "budget": parseInt(requisition.budget, 10),
+                        "budgetCap": parseInt(Number(requisition.budgetCap), 10),
+                        "budget": parseInt(Number(requisition.budget), 10),
                         "currency": requisition.currency_code,
-                        "comments": requisition.comments,
+                        "comments": requisition.comments || "",
                         "budgetPer": Math.abs((requisition.budget / requisition.budgetCap) * 100),
                         "status_text": requisition.status.name,
                         "position_text": requisition.position.positionTitle || requisition.position_code,
@@ -200,13 +197,10 @@ async function onSendRequestForApproval(req) {
                 }
             });
 
-            // const response = await HiringRequestPAService.send(request);
-
-            console.log("response", response);
-
             if (response.status == 'RUNNING' || response.status == 'STARTING') {
                 await UPDATE(req._target).with({
-                    //status_ID: 3,
+                    status_ID: 3,
+                    PAHidden: false,
                     PAUUID: response.id,
                     PAStatus: response.status,
                     PAStartedAt: response.startedAt,
@@ -391,13 +385,17 @@ async function afterReadRequests(Requests, req) {
         if (Array.isArray(Requests)) {
             return Promise.all(Requests.map(async Request => {
                 Request = await updateBudgetInfo(Request, req);
+                Request = await updatePAData(Request, req);
             }))
         } else {
             Requests = await updateBudgetInfo(Requests, req);
+            Requests = await updatePAData(Requests, req);
         }
         return Requests;
     } catch (err) {
-        req.error(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
     }
 }
 
@@ -413,9 +411,9 @@ async function afterPatchRequests(Requests, req) {
         }
         return Requests;
     } catch (err) {
-        req.error(err.code, err.message);
-        //console.log(err.code);
-        //console.log(err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
     }
 }
 
@@ -634,7 +632,9 @@ async function afterSaveRequests(req) {
 
         return req;
     } catch (err) {
-        req.error(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
     }
 }
 
@@ -670,9 +670,9 @@ async function executeCreatePosition(req, code, effectiveStartDate) {
             }
         }
     } catch (err) {
-        //console.log(err)
-        //console.log(err.code, err.message);
-        req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
+        //req.error(err.code, err.message);
     }
 }
 
@@ -705,7 +705,9 @@ async function beforeCreatePositions(req) {
         }
         return req;
     } catch (err) {
-        req.error(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
     }
 }
 
@@ -747,9 +749,9 @@ async function executeCreateCostCenter(req, externalCode, startDate) {
             }
         }
     } catch (err) {
-        //console.log(err)
-        //console.log(err.code, err.message);
-        req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
+        //req.error(err.code, err.message);
     }
 }
 
@@ -781,7 +783,9 @@ async function beforeCreateCostCenters(req) {
         }
         return req;
     } catch (err) {
-        req.error(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
     }
 }
 
@@ -870,9 +874,9 @@ async function executeCreateCompany(req, externalCode, startDate) {
             }
         }
     } catch (err) {
-        req.error(err.code, err.message);
-        //console.log(err)
-        //console.log(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
     }
 }
 
@@ -940,9 +944,9 @@ async function executeUpdateCompany(req, externalCode, startDate) {
             await cds.tx(req).run(UPDATE.entity(namespace + 'Companies').data(sfCompany));
         }
     } catch (error) {
-        //console.log(err.code);
-        //console.log(err.message);
-        req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+        //req.error(err.code, err.message);
     }
 }
 
@@ -957,9 +961,9 @@ async function beforeCreateCompanies(req) {
         }
         return req;
     } catch (err) {
-        //console.log(err.code);
-        //console.log(err.message);
-        req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+        //req.error(err.code, err.message);
     }
 }
 
@@ -1048,9 +1052,9 @@ async function executeCreateDivision(req, externalCode, startDate) {
             }
         }
     } catch (err) {
-        req.error(err.code, err.message);
-        //console.log(err)
-        //console.log(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
     }
 }
 
@@ -1118,9 +1122,9 @@ async function executeUpdateDivision(req, externalCode, startDate) {
             await cds.tx(req).run(UPDATE.entity(namespace + 'Divisions').data(sfDivision));
         }
     } catch (error) {
-        req.error(err.code, err.message);
-        //console.log(err.code);
-        //console.log(err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
     }
 }
 
@@ -1135,9 +1139,9 @@ async function beforeCreateDivisions(req) {
         }
         return req;
     } catch (err) {
-        //console.log(err.code);
-        //console.log(err.message);
-        req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+        //req.error(err.code, err.message);
     }
 }
 
@@ -1226,9 +1230,9 @@ async function executeCreateDepartment(req, externalCode, startDate) {
             }
         }
     } catch (err) {
-        req.error(err.code, err.message);
-        //console.log(err)
-        //console.log(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
     }
 }
 
@@ -1296,10 +1300,10 @@ async function executeUpdateDepartment(req, externalCode, startDate) {
             await cds.tx(req).run(UPDATE.entity(namespace + 'Departments').data(sfDepartment));
         }
     } catch (error) {
-        req.error(err.code, err.message);
-        //console.log(err.code);
-        //console.log(err.message);
-        //console.log('erro execute update department');
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+        console.log('erro execute update department');
     }
 }
 
@@ -1314,9 +1318,9 @@ async function beforeCreateDepartments(req) {
         }
         return req;
     } catch (err) {
-        //console.log(err.code);
-        //console.log(err.message);
-        req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+        //req.error(err.code, err.message);
     }
 }
 
@@ -1405,9 +1409,9 @@ async function executeCreateBusinessUnit(req, externalCode, startDate) {
             }
         }
     } catch (err) {
-        req.error(err.code, err.message);
-        //console.log(err)
-        //console.log(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
     }
 }
 
@@ -1475,9 +1479,9 @@ async function executeUpdateBusinessUnit(req, externalCode, startDate) {
             await cds.tx(req).run(UPDATE.entity(namespace + 'BusinessUnits').data(sfBusinessUnit));
         }
     } catch (error) {
-        req.error(err.code, err.message);
-        //console.log(err.code);
-        //console.log(err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
     }
 }
 
@@ -1492,9 +1496,9 @@ async function beforeCreateBusinessUnits(req) {
         }
         return req;
     } catch (err) {
-        //console.log(err.code);
-        //console.log(err.message);
-        req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+        //req.error(err.code, err.message);
     }
 }
 
@@ -1560,9 +1564,9 @@ async function executeCreateJobCode(req, externalCode, startDate) {
             }
         }
     } catch (err) {
-        req.error(err.code, err.message);
-        //console.log(err)
-        //console.log(err.code, err.message);
+        //req.error(err.code, err.message);
+        console.log(err)
+        console.log(err.code, err.message);
     }
 }
 
@@ -1607,9 +1611,9 @@ async function executeUpdateJobCode(req, externalCode, startDate) {
             await cds.tx(req).run(UPDATE.entity(namespace + 'JobCodes').data(sfJobCode));
         }
     } catch (error) {
-        req.error(err.code, err.message);
-        //console.log(err.code);
-        //console.log(err.message);
+        //req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
     }
 }
 
@@ -1624,9 +1628,9 @@ async function beforeCreateJobCodes(req) {
         }
         return req;
     } catch (err) {
-        //console.log(err.code);
-        //console.log(err.message);
-        req.error(err.code, err.message);
+        console.log(err.code);
+        console.log(err.message);
+        //req.error(err.code, err.message);
     }
 }
 
@@ -1641,6 +1645,7 @@ async function beforeDeleteJobCodes(req) {
 
 module.exports = {
     readSF_Entities,
+    readHiringRequestPAService,
     onSendRequestForApproval,
     beforeSaveRequests,
     beforeCreateRequests,

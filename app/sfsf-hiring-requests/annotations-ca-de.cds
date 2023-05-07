@@ -9,7 +9,8 @@ annotate service.Requests with actions {
             {$Path: 'in/status_ID'},
             1
         ]}},
-        Common.SideEffects.TargetProperties: ['in/status_ID', 'in/PAUUID', 'in/PAStatus', 'in/PAStartedAt', 'in/PACompletedAt'],
+        Common.SideEffects.TargetProperties: ['in/status_ID', 'in/PAUUID', 'in/PAStatus', 
+                                              'in/PAStartedAt', 'in/PACompletedAt', 'in/PAHidden'],
         Common.IsActionCritical : true,
     )
 };
