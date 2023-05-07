@@ -1,6 +1,7 @@
 const cds = require('@sap/cds');
 const namespace = 'deloitte.hiring.db.';
 const namespaceCatalogService = 'deloitte.hiring.service.catalogservice.';
+const config = cds.env;
 
 let FoundationService = null;
 let PositionService = null;
@@ -78,7 +79,7 @@ async function updatePAData(Request, req) {
             })
         )
 
-            if (requisition.PAUUID && requisition.status_ID < 4 ) {
+            if (requisition.PAUUID && requisition.status_ID < 10 ) {
 
                 const response = await HiringRequestPAService.tx(req).get("/" + requisition.PAUUID);
 
@@ -86,7 +87,7 @@ async function updatePAData(Request, req) {
                     Request.PAHidden = false,
                     Request.PAStatus = response.status,
                     Request.PACompletedAt = response.completedAt,
-                    Request.status_ID = response.status == 'RUNNING' ? 2 : response.status == 'CANCELED' ? 5 : 7;
+                    Request.status_ID = response.status == 'RUNNING' ? 2 : response.status == 'CANCELED' ? 11 : 13;
 
                     await cds.tx(req).run(UPDATE.entity(namespaceCatalogService + 'Requests', Request.ID)
                                 .with({ PAHidden: Request.PAHidden,
@@ -154,8 +155,12 @@ async function onSendRequestForApproval(req) {
 
         if (requisition) {
 
+            const PADefinitionId = config.get('PADefinitionId');
+
+            console.log("definition", PADefinitionId);
+
             const response = await HiringRequestPAService.tx(req).post("/", {
-                "definitionId": "us10.mtserver18yk2a98.hiringrequestapproval.hiringRequestProcess",
+                "definitionId": PADefinitionId,
                 "context": {
                     "request": {
                         "ID": requisition.ID,

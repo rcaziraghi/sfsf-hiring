@@ -2,6 +2,8 @@ ID;name;descr;criticality
 1;Rascunho;Atividade não iniciada;5
 2;Em progresso;Atividade em progresso;2
 3;Enviado;Atividade atrasada;2
-4;Reprovado;Atividade bloqueada;1
-5;Cancelado;Atividade cancelada;0
-7;Aprovado;Atividade completada;3
+10;Reprovado;Atividade bloqueada;
+11;Cancelado;Atividade cancelada;0
+12;Erro;Atividade com erro;1
+13;Aprovado;Atividade completa;3
+14;Posição criada;Atividade completa, posição criada;3

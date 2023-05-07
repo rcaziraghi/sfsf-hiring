@@ -55,6 +55,7 @@
     }
   },
   "cds": {
+    "PADefinitionId": "us10.mtserver18yk2a98.hiringrequestapproval.hiringRequestProcess",
     "build": {
       "tasks": [{
           "for": "hana",
@@ -123,7 +124,7 @@
         "kind": "rest",
         "model": "srv/external/HiringProcessAutomation",
         "credentials": {
-          "destination": "sap_process_automation_api",
+          "destination": "sap_process_automation_api_trial",
           "path": "/workflow/rest/v1/workflow-instances",
           "forwardAuthToken": true
         }
