@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="RequisitionComplete" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="true">
-<descriptions defaultDescription="RequisitionComplete"/>
+<Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore"   id="RequisitionTexts" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="true">
+<descriptions defaultDescription="RequisitionTexts"/>
 <localVariables/>
 <variableMappings/>
 <dataSources/>
-<snapshotProcedures/>
 <calculationViews/>
 
-<logicalModel>
+<logicalModel >
   <attributes/>
   <calculatedAttributes/>
   <baseMeasures/>

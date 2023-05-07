@@ -18,7 +18,7 @@ modules:
     builder: npm-ci
 - name: hiring-db-deployer
   type: hdb
-  path: gen/db
+  path: db #  gen/db
   requires:
   - name: hiring-db
   parameters:

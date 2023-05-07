@@ -55,11 +55,30 @@
     }
   },
   "cds": {
+    "build": {
+      "tasks": [{
+          "for": "hana",
+          "dest": "../db"
+        },
+        {
+          "for": "node-cf"
+        }
+      ]
+    },
     "hana": {
       "deploy-format": "hdbtable"
     },
+    "query": {
+      "limit": {
+        "default": 30,
+        "max": 1000
+      }
+    },
     "requires": {
       "auth": {
+        "[production]": {
+          "strategy": "JWT"
+        },
         "[development]": {
           "strategy": "mock",
           "users": {
@@ -94,11 +113,11 @@
       },
       "[hybrid]": {
         "db": {
-          "kind": "hana"
+          "kind": "hana-cloud"
         }
       },
       "db": {
-        "kind": "hana"
+        "kind": "hana-cloud"
       },
       "HiringProcessAutomation": {
         "kind": "rest",
@@ -106,7 +125,7 @@
         "credentials": {
           "destination": "sap_process_automation_api",
           "path": "/workflow/rest/v1/workflow-instances",
-          "forwardAuthToken": true 
+          "forwardAuthToken": true
         }
       }
     }
