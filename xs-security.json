@@ -32,7 +32,7 @@
         "$XSAPPNAME.Requester"
       ],
       "attribute-references": []
-    }
+    },
     {
       "name": "Admin",
       "description": "Administrador",

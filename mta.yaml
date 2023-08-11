@@ -8,6 +8,7 @@ modules:
   path: gen/srv
   requires:
   - name: hiring-db
+  - name: uaa_hiring
   provides:
   - name: srv-api
     properties:
@@ -18,7 +19,7 @@ modules:
     builder: npm-ci
 - name: hiring-db-deployer
   type: hdb
-  path: db #  gen/db
+  path: db
   requires:
   - name: hiring-db
   parameters:
@@ -40,7 +41,7 @@ modules:
   parameters:
     content:
       instance:
-        destinations:
+        destinations:  
         - Name: hiring_approuter_hiring_html_repo_host
           ServiceInstanceName: hiring-html5-app-host-service
           ServiceKeyName: hiring_html_repo_host-key
@@ -96,11 +97,20 @@ resources:
             ProxyType: Internet
             Type: HTTP
             URL: https://ui5.sap.com
+          - Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: hiring-srv-api
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
           existing_destinations_policy: update
       version: 1.0.0
     service: destination
     service-name: hiring-destination-service
     service-plan: lite
+  requires:
+  - name: srv-api
 - name: hiring_html_repo_host
   type: org.cloudfoundry.managed-service
   parameters:

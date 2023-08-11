@@ -1,0 +1,5 @@
+Redind hana service:
+-cf create-service hana hdi-shared sfsf-hiring-db -c '{"database_id":"438d35f8-7bb9-4c8a-b451-e5fcaab05d68"}' --wait
+-cf create-service-key sfsf-hiring-db sfsf-hiring-db-key --wait
+-cds bind -2 sfsf-hiring-db --profile hybrid --kind hana
+

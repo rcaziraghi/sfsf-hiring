@@ -598,7 +598,7 @@ async function updateOrganizational(Request, req) {
             if (RequestDraftOrganizational.BUDGET == 0e+0 && RequestDraftOrganizational.BUDGETCAP == 0e+0) {
 
 
-                RequestDraftOrganizational.BUDGET = 1110000.00;
+                RequestDraftOrganizational.BUDGET = 910404.00;
                 RequestDraftOrganizational.BUDGETCAP = 1250000.00;
                 RequestDraftOrganizational.CURRENCY_CODE = 'EUR';
                 updated = true;
